@@ -14,7 +14,7 @@ import { canUseMetabotOnDatabase } from "metabase/metabot/utils";
 import { addUndo } from "metabase/redux/undo";
 import { getSettingsLoading } from "metabase/selectors/settings";
 
-// import { QuestionPicker } from "metabase/components/EntityPicker"; // FIXME
+// import { TablePicker } from "metabase/components/EntityPicker"; // FIXME
 
 import type Database from "metabase-lib/metadata/Database";
 import type { CollectionItem, DashboardId } from "metabase-types/api";
@@ -49,7 +49,7 @@ export const HomePage = (): JSX.Element => {
 
   return (
     <HomeLayout hasMetabot={getHasMetabot(databases, models, isMetabotEnabled)}>
-      {/* <QuestionPicker onItemSelect={console.log} /> */}
+      {/* <TablePicker onItemSelect={console.log} /> */}
       <HomeContent />
     </HomeLayout>
   );
