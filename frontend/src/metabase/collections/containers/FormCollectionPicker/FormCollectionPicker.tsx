@@ -62,6 +62,7 @@ function FormCollectionPicker({
   const [{ value }, { error, touched }, { setValue }] = useField(name);
   const formFieldRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(MIN_POPOVER_WIDTH);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   useEffect(() => {
     const { width: formFieldWidth } =
@@ -70,28 +71,6 @@ function FormCollectionPicker({
       setWidth(formFieldWidth);
     }
   }, []);
-
-  const renderTrigger = useCallback(
-    ({ onClick: handleShowPopover }) => (
-      <FormField
-        className={className}
-        style={style}
-        title={title}
-        htmlFor={id}
-        error={touched ? error : undefined}
-        ref={formFieldRef}
-      >
-        <SelectButton onClick={handleShowPopover}>
-          {isValidCollectionId(value) ? (
-            <ItemName id={value} type={type} />
-          ) : (
-            placeholder
-          )}
-        </SelectButton>
-      </FormField>
-    ),
-    [id, value, type, title, placeholder, error, touched, className, style],
-  );
 
   const [openCollectionId, setOpenCollectionId] =
     useState<CollectionId>("root");
@@ -106,32 +85,37 @@ function FormCollectionPicker({
     filterPersonalCollections !== "only" ||
     isOpenCollectionInPersonalCollection;
 
-  const renderContent = useCallback(
-    ({ closePopover }) => {
-      return (
-        <EntityPickerModal
+  return (
+    <>
+      <FormField
+          className={className}
+          style={style}
+          title={title}
+          htmlFor={id}
+          error={touched ? error : undefined}
+          ref={formFieldRef}
+        >
+          <SelectButton onClick={() => setIsPickerOpen(true)}>
+            {isValidCollectionId(value) ? (
+              <ItemName id={value} type={type} />
+            ) : (
+              placeholder
+            )}
+          </SelectButton>
+        </FormField>
+        {isPickerOpen && (
+         <EntityPickerModal
           title={t`Select a collection`}
           tabs={["collection"]}
           onItemSelect={({ id }) => {
             console.log('item selected', id)
             setValue(id);
-            closePopover();
+            setIsPickerOpen(false)
           }}
-          onClose={closePopover}
+          onClose={() => setIsPickerOpen(false)}
         />
-      )
-    },
-    [],
-  );
-
-  return (
-    <TippyPopoverWithTrigger
-      sizeToFit
-      placement="bottom-start"
-      renderTrigger={renderTrigger}
-      popoverContent={renderContent}
-      maxWidth={width}
-    />
+        )}
+    </>
   );
 }
 
