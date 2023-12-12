@@ -61,19 +61,10 @@ function FormCollectionPicker({
   const id = useUniqueId();
   const [{ value }, { error, touched }, { setValue }] = useField(name);
   const formFieldRef = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(MIN_POPOVER_WIDTH);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  useEffect(() => {
-    const { width: formFieldWidth } =
-      formFieldRef.current?.getBoundingClientRect() || {};
-    if (formFieldWidth) {
-      setWidth(formFieldWidth);
-    }
-  }, []);
+  const [openCollectionId, setOpenCollectionId] = useState<CollectionId>("root");
 
-  const [openCollectionId, setOpenCollectionId] =
-    useState<CollectionId>("root");
   const openCollection = useSelector(state =>
     Collections.selectors.getObject(state, {
       entityId: openCollectionId,
@@ -89,33 +80,33 @@ function FormCollectionPicker({
   return (
     <>
       <FormField
-          className={className}
-          style={style}
-          title={title}
-          htmlFor={id}
-          error={touched ? error : undefined}
-          ref={formFieldRef}
-        >
-          <SelectButton onClick={() => setIsPickerOpen(true)}>
-            {isValidCollectionId(value) ? (
-              <ItemName id={value} type={type} />
-            ) : (
-              placeholder
-            )}
-          </SelectButton>
-        </FormField>
-        {isPickerOpen && (
-         <EntityPickerModal
+        className={className}
+        style={style}
+        title={title}
+        htmlFor={id}
+        error={touched ? error : undefined}
+        ref={formFieldRef}
+      >
+        <SelectButton onClick={() => setIsPickerOpen(true)}>
+          {isValidCollectionId(value) ? (
+            <ItemName id={value} type={type} />
+          ) : (
+            placeholder
+          )}
+        </SelectButton>
+      </FormField>
+      {isPickerOpen && (
+        <EntityPickerModal
           title={t`Select a collection`}
           tabs={["collection"]}
           value={{ id: value, model: 'collection' }}
           onChange={({ id }) => {
-            setValue(id);
+            setValue(canonicalCollectionId(id));
             setIsPickerOpen(false)
           }}
           onClose={() => setIsPickerOpen(false)}
         />
-        )}
+      )}
     </>
   );
 }

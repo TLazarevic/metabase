@@ -39,6 +39,8 @@ export function SearchResult({
 }) {
   const { name, model, description, moderated_status }: WrappedResult = result;
 
+  console.log({ isSelected })
+
   const showXRayButton =
     result.model === "indexed-entity" &&
     result.id !== undefined &&

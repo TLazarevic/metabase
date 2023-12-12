@@ -14,9 +14,7 @@ import { canUseMetabotOnDatabase } from "metabase/metabot/utils";
 import { addUndo } from "metabase/redux/undo";
 import { getSettingsLoading } from "metabase/selectors/settings";
 
-// import { TabbedEntityPicker } from "metabase/components/EntityPicker";
-
-import { EntityPickerModal } from "metabase/common/components/EntityPicker";
+// import { EntityPickerModal } from "metabase/common/components/EntityPicker";
 import type Database from "metabase-lib/metadata/Database";
 import type { CollectionItem, DashboardId } from "metabase-types/api";
 
@@ -50,7 +48,7 @@ export const HomePage = (): JSX.Element => {
 
   return (
     <HomeLayout hasMetabot={getHasMetabot(databases, models, isMetabotEnabled)}>
-      <EntityPickerModal onItemSelect={console.log} tabs={["collection"]} />
+      {/* <EntityPickerModal onItemSelect={console.log} tabs={["collection"]} /> */}
       <HomeContent />
     </HomeLayout>
   );
