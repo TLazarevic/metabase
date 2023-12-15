@@ -11,6 +11,10 @@ export interface MoveCollectionModalProps {
   onClose: () => void;
 }
 
+const isCollection = (item: any): item is Collection => {
+  return item?.model === "collection";
+}
+
 const MoveCollectionModal = ({
   collection,
   onMove,
@@ -28,8 +32,15 @@ const MoveCollectionModal = ({
     <EntityPickerModal
       title={t`Move "${collection.name}"?`}
       tabs={["collection"]}
-      value={{...collection, model: 'collection'}}
-      onChange={handleMove}
+      value={{
+        id: collection.id as number,
+        model: 'collection'
+      }}
+      onChange={(item) => {
+        if (isCollection(item)) {
+          handleMove(item);
+        }
+      }}
       onClose={onClose}
     />
   );
