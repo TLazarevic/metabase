@@ -54,8 +54,6 @@ function FormCollectionPicker({
   title,
   placeholder = t`Select a collection`,
   type = "collections",
-  initialOpenCollectionId,
-  onOpenCollectionChange,
   filterPersonalCollections,
 }: FormCollectionPickerProps) {
   const id = useUniqueId();
@@ -64,6 +62,8 @@ function FormCollectionPicker({
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const [openCollectionId, setOpenCollectionId] = useState<CollectionId>("root");
+
+  console.log({ openCollectionId})
 
   const openCollection = useSelector(state =>
     Collections.selectors.getObject(state, {
@@ -109,11 +109,12 @@ function FormCollectionPicker({
           }}
           onClose={() => setIsPickerOpen(false)}
           options={{
-            showPersonalCollection: filterPersonalCollections !== "exclude",
+            showPersonalCollections: filterPersonalCollections !== "exclude",
             showRootCollection: filterPersonalCollections !== "only",
             showSearch: hasSearch,
             hasConfirmButtons: true,
             namespace: isSnippetCollection ? "snippets" : undefined,
+            allowCreateNew: showCreateNewCollectionOption,
           }}
         />
       )}
