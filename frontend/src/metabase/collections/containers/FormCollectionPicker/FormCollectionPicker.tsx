@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import type { HTMLAttributes } from "react";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { t } from "ttag";
 
 import { isValidCollectionId } from "metabase/collections/utils";
@@ -61,9 +61,7 @@ function FormCollectionPicker({
   const formFieldRef = useRef<HTMLDivElement>(null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  const [openCollectionId, setOpenCollectionId] = useState<CollectionId>("root");
-
-  console.log({ openCollectionId})
+  const [openCollectionId] = useState<CollectionId>("root");
 
   const openCollection = useSelector(state =>
     Collections.selectors.getObject(state, {
@@ -102,10 +100,10 @@ function FormCollectionPicker({
         <EntityPickerModal
           title={t`Select a collection`}
           tabs={["collection"]}
-          value={{ id: value, model: 'collection' }}
+          value={{ id: value, model: "collection" }}
           onChange={({ id }) => {
             setValue(canonicalCollectionId(id));
-            setIsPickerOpen(false)
+            setIsPickerOpen(false);
           }}
           onClose={() => setIsPickerOpen(false)}
           options={{
