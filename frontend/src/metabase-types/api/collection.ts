@@ -108,6 +108,7 @@ export interface CollectionListQuery {
   archived?: boolean;
   "exclude-other-user-collections"?: boolean;
   "exclude-archived"?: boolean;
+  "personal-only"?: boolean;
   namespace?: string;
   tree?: boolean;
 }
