@@ -10,7 +10,6 @@ import { CreateCollectionOnTheGoButton } from "metabase/containers/CreateCollect
 import type { FilterItemsInPersonalCollection } from "metabase/containers/ItemPicker";
 import SnippetCollectionName from "metabase/containers/SnippetCollectionName";
 import FormField from "metabase/core/components/FormField";
-import SelectButton from "metabase/core/components/SelectButton";
 import Collections from "metabase/entities/collections";
 import SnippetCollections from "metabase/entities/snippet-collections";
 import { useUniqueId } from "metabase/hooks/use-unique-id";
@@ -88,13 +87,18 @@ function FormCollectionPicker({
         error={touched ? error : undefined}
         ref={formFieldRef}
       >
-        <SelectButton onClick={() => setIsPickerOpen(true)}>
+        <Button
+          onClick={() => setIsPickerOpen(true)}
+          fullWidth
+          rightIcon={<Icon name="ellipsis" />}
+          styles={{ inner: { justifyContent: "space-between" } }}
+        >
           {isValidCollectionId(value) ? (
             <ItemName id={value} type={type} />
           ) : (
             placeholder
           )}
-        </SelectButton>
+        </Button>
       </FormField>
       {isPickerOpen && (
         <CollectionPickerModal
