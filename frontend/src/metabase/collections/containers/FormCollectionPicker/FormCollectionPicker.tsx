@@ -97,9 +97,8 @@ function FormCollectionPicker({
         </SelectButton>
       </FormField>
       {isPickerOpen && (
-        <EntityPickerModal
+        <CollectionPickerModal
           title={t`Select a collection`}
-          tabs={["collection"]}
           value={{ id: value, model: "collection" }}
           onChange={({ id }) => {
             setValue(canonicalCollectionId(id));
