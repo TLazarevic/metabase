@@ -57,6 +57,7 @@ export interface Collection {
   is_personal?: boolean;
 
   location?: string;
+  effective_location?: string; // location with only user-accessible collections
   effective_ancestors?: Collection[];
 
   here?: CollectionContentModel[];
