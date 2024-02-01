@@ -320,7 +320,7 @@ class DashboardHeaderContainer extends Component<DashboardHeaderProps> {
         key="cancel"
         className="Button Button--small mr1"
         onClick={this.onRequestCancel}
-        data-palette
+        palette
       >
         {t`Cancel`}
       </Button>,
@@ -546,7 +546,7 @@ class DashboardHeaderContainer extends Component<DashboardHeaderProps> {
             aria-label={t`Edit dashboard`}
             icon="pencil"
             onClick={() => this.handleEdit(dashboard)}
-            data-palette
+            palette
           />
         </Tooltip>,
       );
