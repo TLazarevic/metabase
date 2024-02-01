@@ -24,7 +24,7 @@ export function QuestionSummarizeWidget({
         }
       }}
       active={isShowingSummarySidebar}
-      data-palette
+      palette
       {...props}
     >
       {t`Summarize`}
