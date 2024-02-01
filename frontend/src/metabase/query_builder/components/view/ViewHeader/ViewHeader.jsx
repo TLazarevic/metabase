@@ -546,7 +546,7 @@ function ViewTitleHeaderRightSide(props) {
             placement: "left",
           }}
           onClick={() => onOpenModal("save")}
-          data-palette
+          palette
         >
           {t`Save`}
         </SaveButton>
