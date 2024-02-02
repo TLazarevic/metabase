@@ -8111,9 +8111,8 @@ clsx@1.1.1, clsx@^1.0.4:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
-"cmdk-root@https://github.com/rafpaf/cmdk.git":
+"cmdk-root@file:../repos/cmdk":
   version "0.0.0"
-  resolved "https://github.com/rafpaf/cmdk.git#74245b412a18f905a91f30d5df95dfa091481dd2"
 
 co@^4.6.0:
   version "4.6.0"

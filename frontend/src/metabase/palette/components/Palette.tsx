@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import { useDebounce } from "react-use";
 import { t } from "ttag";
-import { Command } from "cmdk-root/cmdk/src";
 
 import { Flex, Icon, Text } from "metabase/ui";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
@@ -11,6 +11,8 @@ import type {
 } from "../hooks/useCommandPalette";
 import { useCommandPalette } from "../hooks/useCommandPalette";
 import "./Palette.css";
+
+import { Command } from 'cmdk-root/cmdk';
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
