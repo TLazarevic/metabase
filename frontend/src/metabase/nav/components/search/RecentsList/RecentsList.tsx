@@ -36,7 +36,7 @@ const ShortcutKey = styled(Text)`
   border: 1px solid #f0f0f0;
   font-weight: bold;
   font-size: 8pt;
-  line-height: 12pt;
+  line-height: 8pt;
 `;
 
 export const RecentsList = ({ onClick, className }: RecentsListProps) => {
