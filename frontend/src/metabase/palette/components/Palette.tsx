@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
 import { t } from "ttag";
-import { Command } from "cmdk";
+import { Command } from "cmdk-root/cmdk/src";
 
 import { Flex, Icon, Text } from "metabase/ui";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
