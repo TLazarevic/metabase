@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
 import { t } from "ttag";
 
-import { Flex, Icon, Text } from "metabase/ui";
+import { Flex, Icon, Modal, Text } from "metabase/ui";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
 import type {
   CommandPaletteActions,
@@ -111,7 +111,7 @@ export const Palette = () => {
   // TODO: Make the search prefix bold
   // TODO: Do this in a non-hacky way
   return (
-    <Command.Dialog
+    <Modal
       onKeyDown={e => {
         // Escape goes to previous page
         // Backspace goes to previous page when search is empty
@@ -120,7 +120,7 @@ export const Palette = () => {
           setPages(pages => pages.slice(0, -1));
         }
       }}
-      open={open}
+      opened={open}
       onOpenChange={setOpen}
       label="Command palette"
     >
@@ -140,6 +140,6 @@ export const Palette = () => {
         )}
       </Command.List>
       <PaletteFooter />
-    </Command.Dialog>
+    </Modal>
   );
 };
