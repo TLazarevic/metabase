@@ -2,7 +2,6 @@
 import * as React from "react";
 import commandScore from "command-score";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
-import {useDispatch, useStore} from "metabase/lib/redux";
 
 let counter = 0;
 const useId = () => "cmdk" + (counter++).toString(32);
@@ -57,7 +56,6 @@ type InputProps = Omit<
    * Event handler called when the search value changes.
    */
   onValueChange?: (search: string) => void;
-  store: Store;
 };
 type CommandProps = Children &
   DivProps & {
@@ -133,7 +131,7 @@ const CommandContext = React.createContext<Context>(undefined);
 const useCommand = () => React.useContext(CommandContext);
 // @ts-ignore
 const StoreContext = React.createContext<Store>(undefined);
-//const useStore = () => React.useContext(StoreContext);
+const useStore = () => React.useContext(StoreContext);
 // @ts-ignore
 const GroupContext = React.createContext<string>(undefined);
 
@@ -627,6 +625,7 @@ const Item = React.forwardRef<HTMLDivElement, ItemProps>(
     const value = useValue(id, ref, [props.value, props.children, ref]);
 
     const { store } = props;
+    // TODO: Note that the value is not the query, it's the selected item
     const selected = useCmdk(
       state => state.value && state.value === value.current,
     );
@@ -768,11 +767,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const store = useStore();
     const search = useCmdk(state => state.search);
     const context = useCommand();
-    const dispatch = useDispatch();
 
     React.useEffect(() => {
       if (props.value != null) {
-        dispatch({ type: "SET_SEARCH", search: props.value });
+        store.setState("search", props.value);
       }
     }, [props.value]);
 
@@ -794,7 +792,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         value={isControlled ? props.value : search}
         onChange={e => {
           if (!isControlled) {
-            dispatch({ type: "SET_SEARCH", search: props.value });
+            store.setState("search", e.target.value);
           }
 
           onValueChange?.(e.target.value);

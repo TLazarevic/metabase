@@ -14,7 +14,6 @@ import "./Palette.css";
 
 import { Command } from "../cmdk";
 import { useStore } from "metabase/lib/redux";
-import {Provider} from "react-redux";
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
@@ -68,10 +67,10 @@ export const Palette = () => {
   const [query, setQuery] = useState("");
   const [pages, setPages] = useState<PalettePageId[]>(["root"]);
 
+  const [value, setValue] = useState<string | undefined>(undefined);
+
   // The search text is the string used to get search results
   const [debouncedSearchText, setDebouncedSearchText] = useState(query);
-
-  const store = useStore();
 
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
@@ -128,10 +127,8 @@ export const Palette = () => {
       onClose={() => setOpen(false)}
     >
         <Command.Input
-          store={store}
+          onValueChange={setValue}
           placeholder={t`Jump to...`}
-          value={query}
-          onValueChange={setQuery}
         />
       {/* <Command.List> */}
       {/*   <Command.Empty>No results found.</Command.Empty> */}
