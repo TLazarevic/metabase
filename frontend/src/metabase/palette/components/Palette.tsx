@@ -1,44 +1,31 @@
 import { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
 import { t } from "ttag";
-import CommandPalette, {
-  getItemIndex,
-  type JsonStructure as CommandPaletteActions,
-  useHandleOpenCommandPalette,
-} from "react-cmdk";
+import { Command } from "cmdk";
+
 import { Flex, Icon, Text } from "metabase/ui";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
-import type { CommandPalettePageId } from "../hooks/useCommandPalette";
+import type {
+  CommandPaletteActions,
+  PalettePageId,
+} from "../hooks/useCommandPalette";
 import { useCommandPalette } from "../hooks/useCommandPalette";
 import "./Palette.css";
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
-const PalettePage = ({
-  id,
-  actions,
-  searchPrefix = [],
-}: {
-  id: CommandPalettePageId;
-  actions: CommandPaletteActions;
-  searchPrefix?: string[];
-}) => (
-  <CommandPalette.Page id={id} searchPrefix={searchPrefix}>
-    {actions.length
-      ? actions.map(list => (
-          <CommandPalette.List key={list.id} heading={list.heading}>
-            {list.items.map(({ id, ...rest }) => (
-              <CommandPalette.ListItem
-                showType={false}
-                key={id}
-                index={getItemIndex(actions, id)}
-                {...rest}
-              />
-            ))}
-          </CommandPalette.List>
-        ))
-      : null}
-  </CommandPalette.Page>
+const PalettePage = ({ actions }: { actions: CommandPaletteActions }) => (
+  <>
+    {actions.map(({ id, heading, items }) => (
+      <Command.Group key={id} heading={heading}>
+        {items.map(({ id, children, onSelect }) => (
+          <Command.Item key={id} onSelect={onSelect}>
+            {children}
+          </Command.Item>
+        ))}
+      </Command.Group>
+    ))}
+  </>
 );
 
 const PaletteFooter = () => {
@@ -75,10 +62,21 @@ const PaletteFooter = () => {
 export const Palette = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState<CommandPalettePageId>("root");
+  const [pages, setPages] = useState<PalettePageId[]>(["root"]);
 
   // The search text is the string used to get search results
   const [debouncedSearchText, setDebouncedSearchText] = useState(query);
+
+  useEffect(() => {
+    const onKeydown = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen(open => !open);
+      }
+    };
+    document.addEventListener("keydown", onKeydown);
+    return () => document.removeEventListener("keydown", onKeydown);
+  }, []);
 
   useDebounce(
     () => {
@@ -91,10 +89,9 @@ export const Palette = () => {
   const { rootPageActions, adminSettingsActions } = useCommandPalette({
     query,
     debouncedSearchText,
-    setPage,
+    setPages,
     setQuery,
   });
-  useHandleOpenCommandPalette(setOpen);
 
   useEffect(() => {
     // Hacky solution since react-cmdk doesn't provide a ref to the input
@@ -106,25 +103,41 @@ export const Palette = () => {
     }, 0);
   }, [query, open]);
 
+  const page = pages[pages.length - 1];
+
   // TODO: Make the input bold
   // TODO: Make the search prefix bold
   // TODO: Do this in a non-hacky way
   return (
-    <CommandPalette
-      onChangeSearch={setQuery}
-      onChangeOpen={setOpen}
-      search={query}
-      placeholder={t`Jump to...`}
-      isOpen={open}
-      page={page}
-      footer={<PaletteFooter />}
+    <Command.Dialog
+      onKeyDown={e => {
+        // Escape goes to previous page
+        // Backspace goes to previous page when search is empty
+        if (e.key === "Escape" || (e.key === "Backspace" && !query)) {
+          e.preventDefault();
+          setPages(pages => pages.slice(0, -1));
+        }
+      }}
+      open={open}
+      onOpenChange={setOpen}
+      label="Command palette"
     >
-      <PalettePage id="root" actions={rootPageActions} />
-      <PalettePage
-        id="admin_settings"
-        actions={adminSettingsActions}
-        searchPrefix={[t`Admin settings`]}
+      <Command.Input
+        placeholder={t`Jump to...`}
+        value={query}
+        onValueChange={setQuery}
       />
-    </CommandPalette>
+      <Command.List>
+        <Command.Empty>No results found.</Command.Empty>
+        {page === "root" && <PalettePage actions={rootPageActions} />}
+        {page === "admin_settings" && (
+          <PalettePage
+            actions={adminSettingsActions}
+            //searchPrefix={[t`Admin settings`]}
+          />
+        )}
+      </Command.List>
+      <PaletteFooter />
+    </Command.Dialog>
   );
 };

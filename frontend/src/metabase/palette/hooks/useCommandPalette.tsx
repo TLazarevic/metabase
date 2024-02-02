@@ -4,10 +4,6 @@ import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useMemo, useEffect } from "react";
 import { push } from "react-router-redux";
 import type { JsonStructureItem } from "react-cmdk";
-import {
-  filterItems,
-  type JsonStructure as CommandPaletteActions,
-} from "react-cmdk";
 import { useDispatch, useSelector } from "metabase/lib/redux";
 import { setOpenModal, closeModal } from "metabase/redux/ui";
 import * as Urls from "metabase/lib/urls";
@@ -22,7 +18,17 @@ import Search from "metabase/entities/search";
 import { ItemIcon } from "metabase/search/components/SearchResult";
 import type { WrappedResult } from "metabase/search/types";
 
-export type CommandPalettePageId = "root" | "admin_settings";
+// migrating to cmdk
+export type CommandPaletteAction = Omit<JsonStructureItem, "onclick"> & {
+  onSelect?: (value?: string) => void;
+};
+export type CommandPaletteActions = {
+  id: string;
+  heading?: string;
+  items: CommandPaletteAction[];
+}[];
+
+export type PalettePageId = "root" | "admin_settings";
 
 type AdminSetting = {
   key: string;
@@ -32,19 +38,53 @@ type AdminSetting = {
   path: string;
 };
 
+const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
+  if (!child) {
+    return false;
+  }
+  if (typeof child === "string") {
+    return child.toLowerCase().includes(query.toLowerCase());
+  }
+  const children = Array.isArray(child) ? child : [child.toString()];
+  return children.some(child => childMatchesQuery(child, query));
+};
+
+const filterItems = (
+  actions: CommandPaletteActions,
+  query: string,
+): CommandPaletteActions => {
+  return actions.map(action => {
+    return {
+      ...action,
+      items: action.items.filter(item => {
+        if (item.children) {
+          return childMatchesQuery(item.children, query);
+        }
+      }),
+    };
+  });
+};
+
 export const useCommandPalette = ({
   query,
   debouncedSearchText,
-  setPage,
+  setPages,
   setQuery,
 }: {
   query: string;
   debouncedSearchText: string;
-  setPage: Dispatch<SetStateAction<CommandPalettePageId>>;
+  setPages: Dispatch<SetStateAction<PalettePageId[]>>;
   setQuery: Dispatch<SetStateAction<string>>;
 }) => {
   const dispatch = useDispatch();
-  const adminSections = useSelector<AdminSetting>(getSections);
+  const adminSections = useSelector<Record<string, AdminSetting>>(getSections);
+
+  const setPage = useCallback(
+    (page: PalettePageId) => {
+      setPages(pages => [...pages.slice(0, -1), page]);
+    },
+    [setPages],
+  );
 
   useEffect(() => {
     dispatch(reloadSettings());
@@ -109,10 +149,13 @@ export const useCommandPalette = ({
         {
           id: "contextual_actions",
           heading: t`On this page`,
-          items: contextualActions,
+          items: contextualActions.filter(({ children }) =>
+            query
+              ? children?.toString().toLowerCase().includes(query.toLowerCase())
+              : true,
+          ),
         },
       ];
-      actions = filterItems(actions, query);
     }
 
     actions = [
@@ -125,7 +168,7 @@ export const useCommandPalette = ({
             id: "new_collection",
             children: t`New collection`,
             icon: () => <Icon name="collection" />,
-            onClick: () => {
+            onSelect: () => {
               openNewModal("collection");
             },
           },
@@ -133,7 +176,7 @@ export const useCommandPalette = ({
             id: "new_dashboard",
             children: t`New dashboard`,
             icon: () => <Icon name="dashboard" />,
-            onClick: () => {
+            onSelect: () => {
               openNewModal("dashboard");
             },
           },
@@ -141,7 +184,7 @@ export const useCommandPalette = ({
             id: "new_question",
             children: t`New question`,
             icon: () => <Icon name="insight" />,
-            onClick: () => {
+            onSelect: () => {
               dispatch(closeModal());
               dispatch(
                 push(
@@ -158,7 +201,7 @@ export const useCommandPalette = ({
             children: t`Admin settings`,
             icon: () => <Icon name="gear" />,
             closeOnSelect: false,
-            onClick: () => {
+            onSelect: () => {
               setQuery("");
               setPage("admin_settings");
             },
@@ -176,7 +219,7 @@ export const useCommandPalette = ({
             keywords: [query], // always match the query
             icon: () => <Icon name="reference" />,
             closeOnSelect: false,
-            onClick: () => {
+            onSelect: () => {
               const host = "https://www.metabase.com";
               if (query) {
                 const params = new URLSearchParams({ query });
@@ -192,7 +235,7 @@ export const useCommandPalette = ({
     ];
     const filteredRootPageActions = filterItems(actions, query);
 
-    let searchItems: JsonStructureItem[] = [];
+    let searchItems: CommandPaletteAction[] = [];
     if (isSearchLoading) {
       searchItems.push({
         id: "search-is-loading",
@@ -227,7 +270,7 @@ export const useCommandPalette = ({
               type={wrappedResult.model}
             />
           ),
-          onClick: () => {
+          onSelect: () => {
             dispatch(closeModal());
             dispatch(push(wrappedResult.getUrl()));
           },
@@ -265,15 +308,15 @@ export const useCommandPalette = ({
           children: t`Back`,
           icon: () => <Icon name="arrow_left" />,
           closeOnSelect: false,
-          onClick: () => {
+          onSelect: () => {
             setPage("root");
           },
         },
         ...filteredAdmin.map(s => ({
-          id: s.displayName,
-          children: s.displayName,
+          id: s.display_name,
+          children: s.display_name,
           icon: () => <Icon name="gear" />,
-          onClick: () =>
+          onSelect: () =>
             dispatch(
               push({
                 pathname: s.path,

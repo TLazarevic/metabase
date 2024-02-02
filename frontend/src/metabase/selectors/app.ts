@@ -1,7 +1,6 @@
 import type { Location } from "history";
 import type { Selector } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
-import type { JsonStructureItem } from "react-cmdk";
 import { getUser } from "metabase/selectors/user";
 import {
   getIsEditing as getIsEditingDashboard,
@@ -14,6 +13,7 @@ import {
 } from "metabase/query_builder/selectors";
 import { getEmbedOptions, getIsEmbedded } from "metabase/selectors/embed";
 import type { State } from "metabase-types/store";
+import type { CommandPaletteAction } from "metabase/palette/hooks/useCommandPalette";
 
 export interface RouterProps {
   location: Location;
@@ -204,8 +204,11 @@ export const getIsNavbarOpen: Selector<State, boolean> = createSelector(
   },
 );
 
-export const getContextualPaletteActions: Selector<State, JsonStructureItem[]> =
-  createSelector(
-    [(state: State) => state.app.contextualPaletteActions],
-    (contextualPaletteActions: JsonStructureItem[]) => contextualPaletteActions,
-  );
+export const getContextualPaletteActions: Selector<
+  State,
+  CommandPaletteAction[]
+> = createSelector(
+  [(state: State) => state.app.contextualPaletteActions],
+  (contextualPaletteActions: CommandPaletteAction[]) =>
+    contextualPaletteActions,
+);
