@@ -12,7 +12,7 @@ import type {
 import { useCommandPalette } from "../hooks/useCommandPalette";
 import "./Palette.css";
 
-import { Command } from 'cmdk-root/cmdk';
+import { Command } from "cmdk-root/cmdk";
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
@@ -121,8 +121,7 @@ export const Palette = () => {
         }
       }}
       opened={open}
-      onOpenChange={setOpen}
-      label="Command palette"
+      onClose={() => setOpen(false)}
     >
       <Command.Input
         placeholder={t`Jump to...`}
