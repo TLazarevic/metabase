@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "metabase/lib/redux";
 import { setOpenModal, closeModal } from "metabase/redux/ui";
 import * as Urls from "metabase/lib/urls";
 import { Icon, Loader } from "metabase/ui";
-import { getContextualPaletteActions } from "metabase/selectors/app";
+import { getContextualPaletteActions } from "metabase/selectors/palette";
 import { getSections } from "metabase/admin/settings/selectors";
 import { reloadSettings } from "metabase/admin/settings/settings";
 import { useSearchListQuery } from "metabase/common/hooks";

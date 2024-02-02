@@ -203,12 +203,3 @@ export const getIsNavbarOpen: Selector<State, boolean> = createSelector(
     return isNavbarOpen;
   },
 );
-
-export const getContextualPaletteActions: Selector<
-  State,
-  CommandPaletteAction[]
-> = createSelector(
-  [(state: State) => state.app.contextualPaletteActions],
-  (contextualPaletteActions: CommandPaletteAction[]) =>
-    contextualPaletteActions,
-);

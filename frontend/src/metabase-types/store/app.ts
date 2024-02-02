@@ -18,5 +18,5 @@ export interface AppBreadCrumbs {
 export interface AppState {
   errorPage: AppErrorDescriptor | null;
   isNavbarOpen: boolean;
-  contextualPaletteActions: JsonStructure;
+  paletteActions: JsonStructure;
 }
