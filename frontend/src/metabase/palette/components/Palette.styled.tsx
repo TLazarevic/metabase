@@ -70,4 +70,8 @@ export const PaletteModalContainer = styled.div`
   flex: 1;
 `;
 
-CommandPalette.ListItem;
+export const StyledPalette = styled(CommandPalette)`
+  & input {
+    font-weight: bold !important;
+  }
+`;

@@ -114,7 +114,7 @@ export const Palette = () => {
       onChangeSearch={setQuery}
       onChangeOpen={setOpen}
       search={query}
-      placeholder="Jump to..."
+      placeholder={t`Jump to...`}
       isOpen={open}
       page={page}
       footer={<PaletteFooter />}
