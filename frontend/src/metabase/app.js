@@ -33,6 +33,8 @@ import "ee-plugins"; // eslint-disable-line import/no-duplicates
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
+import { Palette } from "./palette/components/Palette";
+
 // router
 import { Router, useRouterHistory } from "react-router";
 import { createHistory } from "history";
@@ -77,6 +79,7 @@ function _init(reducers, getRoutes, callback) {
 
   ReactDOM.render(
     <Provider store={store} ref={ref => (root = ref)}>
+      <Palette />
       <EmotionCacheProvider>
         <DragDropContextProvider backend={HTML5Backend} context={{ window }}>
           <ThemeProvider>

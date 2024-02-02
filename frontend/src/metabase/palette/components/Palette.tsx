@@ -12,7 +12,9 @@ import type {
 import { useCommandPalette } from "../hooks/useCommandPalette";
 import "./Palette.css";
 
-import { Command } from "cmdk-root/cmdk";
+import { Command } from "../cmdk";
+import { useStore } from "metabase/lib/redux";
+import {Provider} from "react-redux";
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
@@ -69,6 +71,8 @@ export const Palette = () => {
   // The search text is the string used to get search results
   const [debouncedSearchText, setDebouncedSearchText] = useState(query);
 
+  const store = useStore();
+
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -123,22 +127,23 @@ export const Palette = () => {
       opened={open}
       onClose={() => setOpen(false)}
     >
-      <Command.Input
-        placeholder={t`Jump to...`}
-        value={query}
-        onValueChange={setQuery}
-      />
-      <Command.List>
-        <Command.Empty>No results found.</Command.Empty>
-        {page === "root" && <PalettePage actions={rootPageActions} />}
-        {page === "admin_settings" && (
-          <PalettePage
-            actions={adminSettingsActions}
-            //searchPrefix={[t`Admin settings`]}
-          />
-        )}
-      </Command.List>
-      <PaletteFooter />
+        <Command.Input
+          store={store}
+          placeholder={t`Jump to...`}
+          value={query}
+          onValueChange={setQuery}
+        />
+      {/* <Command.List> */}
+      {/*   <Command.Empty>No results found.</Command.Empty> */}
+      {/*   {page === "root" && <PalettePage actions={rootPageActions} />} */}
+      {/*   {page === "admin_settings" && ( */}
+      {/*     <PalettePage */}
+      {/*       actions={adminSettingsActions} */}
+      {/*       //searchPrefix={[t`Admin settings`]} */}
+      {/*     /> */}
+      {/*   )} */}
+      {/* </Command.List> */}
+      {/* <PaletteFooter /> */}
     </Modal>
   );
 };
