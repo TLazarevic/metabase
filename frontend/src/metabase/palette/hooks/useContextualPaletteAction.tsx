@@ -4,7 +4,7 @@ import { useDispatch } from "metabase/lib/redux";
 import {
   registerPaletteAction,
   unregisterPaletteAction,
-} from "metabase/redux/app";
+} from "metabase/redux/palette";
 import type { IconName } from "metabase/ui";
 import { Icon } from "metabase/ui";
 import { uuid } from "metabase/lib/utils";
