@@ -35,7 +35,6 @@ type ItemProps = Children &
      * If no value is provided, it will be inferred from `children` or the rendered `textContent`. If your `textContent` changes between renders, you _must_ provide a stable, unique `value`.
      */
     value?: string;
-    store: Store;
   };
 type GroupProps = Children &
   Omit<DivProps, "heading" | "value"> & {

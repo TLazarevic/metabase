@@ -3,16 +3,15 @@ import type { Selector } from "@reduxjs/toolkit";
 import type { State } from "metabase-types/store";
 import type { CommandPaletteAction } from "metabase/palette/hooks/useCommandPalette";
 
+// TODO: Not sure the default value makes sense here
+export const getPalette = (state: State) => state.palette || {};
+
 export const getContextualPaletteActions: Selector<
   State,
   CommandPaletteAction[]
-> = createSelector(
-  [(state: State) => state.palette.contextualActions],
-  (contextualPaletteActions: CommandPaletteAction[]) =>
-    contextualPaletteActions,
-);
+> = createSelector([getPalette], palette => palette?.contextualActions || []);
 
 export const getPaletteQuery: Selector<State, string> = createSelector(
-  [(state: State) => state.palette.query],
-  query => query,
+  [getPalette],
+  palette => palette.query,
 );

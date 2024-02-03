@@ -17,9 +17,11 @@ import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
 import Search from "metabase/entities/search";
 import { ItemIcon } from "metabase/search/components/SearchResult";
 import type { WrappedResult } from "metabase/search/types";
+import {setPaletteQuery} from "metabase/redux/palette";
 
 // migrating to cmdk
-export type CommandPaletteAction = Omit<JsonStructureItem, "onclick"> & {
+export type CommandPaletteAction = Omit<JsonStructureItem, "onclick" | "id"> & {
+  id?: string;
   onSelect?: (value?: string) => void;
 };
 export type CommandPaletteActions = {
@@ -69,12 +71,10 @@ export const useCommandPalette = ({
   query,
   debouncedSearchText,
   setPages,
-  setQuery,
 }: {
   query: string;
   debouncedSearchText: string;
   setPages: Dispatch<SetStateAction<PalettePageId[]>>;
-  setQuery: Dispatch<SetStateAction<string>>;
 }) => {
   const dispatch = useDispatch();
   const adminSections = useSelector<Record<string, AdminSetting>>(getSections);
@@ -202,7 +202,7 @@ export const useCommandPalette = ({
             icon: () => <Icon name="gear" />,
             closeOnSelect: false,
             onSelect: () => {
-              setQuery("");
+              dispatch(setPaletteQuery(""));
               setPage("admin_settings");
             },
           },

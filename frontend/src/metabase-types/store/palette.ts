@@ -1,6 +1,6 @@
-import type { JsonStructureItem } from "react-cmdk";
+import type { CommandPaletteAction } from "metabase/palette/hooks/useCommandPalette";
 
 export interface PaletteState {
   query: string;
-  contextualActions: JsonStructureItem[];
+  contextualActions: CommandPaletteAction[];
 }

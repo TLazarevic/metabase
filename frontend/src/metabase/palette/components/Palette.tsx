@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { useDebounce } from "react-use";
 import { t } from "ttag";
+
+import { ContentViewportContext } from "metabase/core/context/ContentViewportContext";
 
 import { Flex, Icon, Modal, Text } from "metabase/ui";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
@@ -13,7 +15,8 @@ import { useCommandPalette } from "../hooks/useCommandPalette";
 import "./Palette.css";
 
 import { Command } from "../cmdk";
-import { useStore } from "metabase/lib/redux";
+import { useSelector } from "metabase/lib/redux";
+import {getPaletteQuery} from "metabase/selectors/palette";
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
@@ -62,25 +65,29 @@ const PaletteFooter = () => {
   );
 };
 
+
 export const Palette = () => {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
   const [pages, setPages] = useState<PalettePageId[]>(["root"]);
 
-  const [value, setValue] = useState<string | undefined>(undefined);
+  const query = useSelector(getPaletteQuery);
 
   // The search text is the string used to get search results
   const [debouncedSearchText, setDebouncedSearchText] = useState(query);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const viewport = useContext(ContentViewportContext);
+
   useEffect(() => {
-    const onKeydown = (e: KeyboardEvent) => {
+    if (!viewport) return;
+    const openOnCommandK = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen(open => !open);
       }
     };
-    document.addEventListener("keydown", onKeydown);
-    return () => document.removeEventListener("keydown", onKeydown);
+    viewport.addEventListener("keydown", openOnCommandK);
+    return () => viewport.removeEventListener("keydown", openOnCommandK);
   }, []);
 
   useDebounce(
@@ -95,18 +102,12 @@ export const Palette = () => {
     query,
     debouncedSearchText,
     setPages,
-    setQuery,
   });
 
   useEffect(() => {
-    // Hacky solution since react-cmdk doesn't provide a ref to the input
-    setTimeout(() => {
-      const input = document.getElementById("command-palette-search-input");
-      if (input) {
-        input.setAttribute("autocomplete", "off");
-      }
-    }, 0);
-  }, [query, open]);
+    if (!inputRef.current) return;
+    inputRef.current.setAttribute("autocomplete", "off");
+  }, [inputRef]);
 
   const page = pages[pages.length - 1];
 
@@ -126,10 +127,7 @@ export const Palette = () => {
       opened={open}
       onClose={() => setOpen(false)}
     >
-        <Command.Input
-          onValueChange={setValue}
-          placeholder={t`Jump to...`}
-        />
+        <Command.Input placeholder={t`Jump to...`} />
       {/* <Command.List> */}
       {/*   <Command.Empty>No results found.</Command.Empty> */}
       {/*   {page === "root" && <PalettePage actions={rootPageActions} />} */}
