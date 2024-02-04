@@ -9,7 +9,7 @@ import { DashboardHeaderButton } from "metabase/dashboard/components/DashboardHe
 import {
   registerPaletteAction,
   unregisterPaletteAction,
-} from "metabase/redux/palette";
+} from "metabase/redux/app";
 import { useDispatch } from "metabase/lib/redux";
 import { createPaletteAction } from "metabase/palette/utils";
 import { IconContainer } from "./TextOptionsButton.styled";
