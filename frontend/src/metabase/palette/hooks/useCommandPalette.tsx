@@ -17,7 +17,7 @@ import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
 import Search from "metabase/entities/search";
 import { ItemIcon } from "metabase/search/components/SearchResult";
 import type { WrappedResult } from "metabase/search/types";
-import {setPaletteQuery} from "metabase/redux/palette";
+import { setPaletteQuery } from "metabase/redux/palette";
 
 // migrating to cmdk
 export type CommandPaletteAction = Omit<JsonStructureItem, "onclick" | "id"> & {
@@ -38,33 +38,6 @@ type AdminSetting = {
   description: string | null;
   type: "string";
   path: string;
-};
-
-const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
-  if (!child) {
-    return false;
-  }
-  if (typeof child === "string") {
-    return child.toLowerCase().includes(query.toLowerCase());
-  }
-  const children = Array.isArray(child) ? child : [child.toString()];
-  return children.some(child => childMatchesQuery(child, query));
-};
-
-const filterItems = (
-  actions: CommandPaletteActions,
-  query: string,
-): CommandPaletteActions => {
-  return actions.map(action => {
-    return {
-      ...action,
-      items: action.items.filter(item => {
-        if (item.children) {
-          return childMatchesQuery(item.children, query);
-        }
-      }),
-    };
-  });
 };
 
 export const useCommandPalette = ({
@@ -290,7 +263,6 @@ export const useCommandPalette = ({
     dispatch,
     setPage,
     openNewModal,
-    setQuery,
     contextualActions,
     searchResults,
     searchError,
@@ -332,4 +304,31 @@ export const useCommandPalette = ({
     rootPageActions,
     adminSettingsActions,
   };
+};
+
+const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
+  if (!child) {
+    return false;
+  }
+  if (typeof child === "string") {
+    return child.toLowerCase().includes(query.toLowerCase());
+  }
+  const children = Array.isArray(child) ? child : [child.toString()];
+  return children.some(child => childMatchesQuery(child, query));
+};
+
+const filterItems = (
+  actions: CommandPaletteActions,
+  query: string,
+): CommandPaletteActions => {
+  return actions.map(action => {
+    return {
+      ...action,
+      items: action.items.filter(item => {
+        if (item.children) {
+          return childMatchesQuery(item.children, query);
+        }
+      }),
+    };
+  });
 };
