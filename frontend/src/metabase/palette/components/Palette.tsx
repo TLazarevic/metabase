@@ -16,7 +16,8 @@ import "./Palette.css";
 
 import { Command } from "../cmdk";
 import { useSelector } from "metabase/lib/redux";
-import {getPaletteQuery} from "metabase/selectors/palette";
+import { getPaletteQuery } from "metabase/selectors/palette";
+import { setPaletteQuery } from "metabase/redux/palette";
 
 // TODO: Maybe scroll to the selected item in the palette when it's out of sight
 
@@ -64,7 +65,6 @@ const PaletteFooter = () => {
     </Flex>
   );
 };
-
 
 export const Palette = () => {
   const [open, setOpen] = useState(false);
@@ -127,7 +127,7 @@ export const Palette = () => {
       opened={open}
       onClose={() => setOpen(false)}
     >
-        <Command.Input placeholder={t`Jump to...`} />
+      <Command.Input placeholder={t`Jump to...`} />
       {/* <Command.List> */}
       {/*   <Command.Empty>No results found.</Command.Empty> */}
       {/*   {page === "root" && <PalettePage actions={rootPageActions} />} */}
