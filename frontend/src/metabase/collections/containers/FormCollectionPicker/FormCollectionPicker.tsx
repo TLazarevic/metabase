@@ -114,6 +114,7 @@ function FormCollectionPicker({
       >
         <Button
           data-testid="collection-picker-button"
+          id={id}
           onClick={() => setIsPickerOpen(true)}
           fullWidth
           rightIcon={<Icon name="ellipsis" />}
