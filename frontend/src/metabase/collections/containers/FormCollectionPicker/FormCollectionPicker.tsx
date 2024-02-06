@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import type { HTMLAttributes } from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { t } from "ttag";
 
 import { isValidCollectionId } from "metabase/collections/utils";
@@ -77,6 +77,31 @@ function FormCollectionPicker({
   const hasSearch = type === "collections";
   const isSnippetCollection = type === "snippet-collections";
 
+  const options = useMemo(
+    () => ({
+      showPersonalCollections: filterPersonalCollections !== "exclude",
+      showRootCollection: filterPersonalCollections !== "only",
+      showSearch: hasSearch,
+      hasConfirmButtons: true,
+      namespace: isSnippetCollection ? "snippets" : undefined,
+      allowCreateNew: showCreateNewCollectionOption,
+    }),
+    [
+      filterPersonalCollections,
+      hasSearch,
+      isSnippetCollection,
+      showCreateNewCollectionOption,
+    ],
+  );
+
+  const handleChange = useCallback(
+    ({ id }) => {
+      setValue(canonicalCollectionId(id));
+      setIsPickerOpen(false);
+    },
+    [setValue],
+  );
+
   return (
     <>
       <FormField
@@ -105,19 +130,9 @@ function FormCollectionPicker({
         <CollectionPickerModal
           title={t`Select a collection`}
           value={{ id: value, model: "collection" }}
-          onChange={({ id }) => {
-            setValue(canonicalCollectionId(id));
-            setIsPickerOpen(false);
-          }}
+          onChange={handleChange}
           onClose={() => setIsPickerOpen(false)}
-          options={{
-            showPersonalCollections: filterPersonalCollections !== "exclude",
-            showRootCollection: filterPersonalCollections !== "only",
-            showSearch: hasSearch,
-            hasConfirmButtons: true,
-            namespace: isSnippetCollection ? "snippets" : undefined,
-            allowCreateNew: showCreateNewCollectionOption,
-          }}
+          options={options}
         />
       )}
     </>
