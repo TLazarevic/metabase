@@ -14,7 +14,6 @@ import {
   DescriptionDivider,
   DescriptionSection,
   LoadingSection,
-  ModerationIcon,
   ResultNameSection,
   ResultTitle,
   SearchResultContainer,
@@ -108,7 +107,11 @@ export function SearchResult({
           >
             {name}
           </ResultTitle>
-          <ModerationIcon status={moderated_status} filled size={14} />
+          <PLUGIN_MODERATION.ModerationStatusIcon
+            status={moderated_status}
+            filled
+            size={14}
+          />
         </Group>
         <InfoText showLinks={!onClick} result={result} isCompact={compact} />
         {description && showDescription && (

@@ -22,6 +22,7 @@ import { Group, Loader, Stack, Title } from "metabase/ui";
 import type { RecentItem } from "metabase-types/api";
 
 import { getItemName, getItemUrl, isItemActive } from "./util";
+import { PLUGIN_MODERATION } from "metabase/plugins";
 
 type RecentsListContentProps = {
   isLoading: boolean;
@@ -85,7 +86,7 @@ export const RecentsListContent = ({
                   >
                     {getItemName(item)}
                   </ResultTitle>
-                  <ModerationIcon
+                  <PLUGIN_MODERATION.ModerationStatusIcon
                     status={getModeratedStatus(item)}
                     filled
                     size={14}
