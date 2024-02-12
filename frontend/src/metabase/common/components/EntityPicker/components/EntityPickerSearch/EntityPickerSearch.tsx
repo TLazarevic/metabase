@@ -13,16 +13,20 @@ import { useDispatch } from "metabase/lib/redux";
 import Search from "metabase/entities/search";
 import { SearchLoadingSpinner } from "metabase/nav/components/search/SearchResults";
 
+const defaultSearchFilter = (results: SearchResultType[]) => results;
+
 export function EntityPickerSearchInput({
   searchQuery,
   setSearchQuery,
   setSearchResults,
   models,
+  searchFilter = defaultSearchFilter,
 }: {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setSearchResults: (results: SearchResultType[] | null) => void;
   models: string[];
+  searchFilter?: (results: SearchResultType[]) => SearchResultType[];
 }) {
   useDebouncedEffect(
     () => {
@@ -31,7 +35,8 @@ export function EntityPickerSearchInput({
           .list({ models, q: searchQuery })
           .then((results: SearchResultsType) => {
             if (results.data) {
-              setSearchResults(results.data);
+              const filteredResults = searchFilter(results.data);
+              setSearchResults(filteredResults);
             } else {
               setSearchResults(null);
             }
@@ -41,7 +46,7 @@ export function EntityPickerSearchInput({
       }
     },
     200,
-    [searchQuery, models],
+    [searchQuery, models, searchFilter],
   );
 
   return (

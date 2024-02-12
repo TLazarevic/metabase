@@ -39,6 +39,7 @@ interface EntityPickerModalProps {
   onClose: () => void;
   tabs: EntityTab[];
   options?: EntityPickerOptions;
+  searchResultFilter?: (results: SearchResult[]) => SearchResult[];
 }
 
 export function EntityPickerModal({
@@ -48,6 +49,7 @@ export function EntityPickerModal({
   tabs,
   value,
   options = defaultOptions,
+  searchResultFilter,
 }: EntityPickerModalProps) {
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -96,6 +98,7 @@ export function EntityPickerModal({
                 setSearchResults={setSearchResults}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                searchFilter={searchResultFilter}
               />
             )}
           </GrowFlex>
@@ -136,7 +139,7 @@ export function EntityPickerModal({
         <NewCollectionDialog
           isOpen={createDialogOpen}
           onClose={() => setCreateDialogOpen(false)}
-          parentCollection={selectedItem}
+          parentCollectionId={selectedItem?.id || value?.id || "root"}
         />
       </ModalContent>
     </Modal.Root>
@@ -149,13 +152,22 @@ export const CollectionPickerModal = ({
   onClose,
   value,
   options = defaultOptions,
-}: Omit<EntityPickerModalProps, "tabs">) => (
-  <EntityPickerModal
-    title={title}
-    onChange={onChange}
-    onClose={onClose}
-    value={value}
-    tabs={[CollectionPicker]}
-    options={options}
-  />
-);
+}: Omit<EntityPickerModalProps, "tabs">) => {
+  const searchFilter = useCallback(
+    searchResults =>
+      searchResults.filter((result: SearchResult) => result.can_write),
+    [],
+  );
+
+  return (
+    <EntityPickerModal
+      title={title}
+      onChange={onChange}
+      onClose={onClose}
+      value={value}
+      tabs={[CollectionPicker]}
+      options={options}
+      searchResultFilter={searchFilter}
+    />
+  );
+};

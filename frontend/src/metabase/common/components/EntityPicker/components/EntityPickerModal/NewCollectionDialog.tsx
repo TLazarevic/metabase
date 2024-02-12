@@ -1,6 +1,6 @@
 import { t } from "ttag";
-import { Modal, Button } from "metabase/ui";
-import type { SearchResult } from "metabase-types/api";
+import { Modal, Button, Loader } from "metabase/ui";
+import type { CollectionId } from "metabase-types/api";
 import FormFooter from "metabase/core/components/FormFooter";
 import { useDispatch } from "metabase/lib/redux";
 import Collections from "metabase/entities/collections";
@@ -12,17 +12,18 @@ import {
   FormErrorMessage,
   FormSubmitButton,
 } from "metabase/forms";
+import { useCollectionQuery } from "metabase/common/hooks";
 
 interface NewCollectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  parentCollection: SearchResult | null;
+  parentCollectionId: CollectionId;
 }
 
 export const NewCollectionDialog = ({
   isOpen,
   onClose,
-  parentCollection,
+  parentCollectionId,
 }: NewCollectionDialogProps) => {
   const dispatch = useDispatch();
 
@@ -30,12 +31,13 @@ export const NewCollectionDialog = ({
     await dispatch(
       Collections.actions.create({
         name,
-        parent_id:
-          parentCollection?.id === "root" ? null : parentCollection?.id,
+        parent_id: parentCollectionId,
       }),
     );
     onClose();
   };
+
+  const { data, isLoading } = useCollectionQuery({ id: parentCollectionId });
 
   return (
     <Modal
@@ -44,30 +46,34 @@ export const NewCollectionDialog = ({
       onClose={onClose}
       data-testid="create-collection-on-the-go"
     >
-      <FormProvider
-        initialValues={{ name: "" }}
-        onSubmit={onCreateNewCollection}
-      >
-        {({ dirty }: { dirty: boolean }) => (
-          <Form>
-            <FormTextInput
-              name="name"
-              label={t`Name of new folder inside "${parentCollection?.name}"`}
-              placeholder={t`My new collection`}
-              mb="1rem"
-            />
-            <FormFooter>
-              <FormErrorMessage inline />
-              <Button type="button" onClick={onClose}>{t`Cancel`}</Button>
-              <FormSubmitButton
-                label={t`Create`}
-                disabled={!dirty}
-                variant="filled"
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <FormProvider
+          initialValues={{ name: "" }}
+          onSubmit={onCreateNewCollection}
+        >
+          {({ dirty }: { dirty: boolean }) => (
+            <Form>
+              <FormTextInput
+                name="name"
+                label={t`Name of new folder inside "${data?.name}"`}
+                placeholder={t`My new collection`}
+                mb="1rem"
               />
-            </FormFooter>
-          </Form>
-        )}
-      </FormProvider>
+              <FormFooter>
+                <FormErrorMessage inline />
+                <Button type="button" onClick={onClose}>{t`Cancel`}</Button>
+                <FormSubmitButton
+                  label={t`Create`}
+                  disabled={!dirty}
+                  variant="filled"
+                />
+              </FormFooter>
+            </Form>
+          )}
+        </FormProvider>
+      )}
     </Modal>
   );
 };

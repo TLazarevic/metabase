@@ -51,7 +51,7 @@ describe("collection permissions", () => {
                   });
                   // eslint-disable-next-line no-unscoped-text-selectors -- deprecated usage
                   cy.findByText("Dashboard").click();
-                  cy.findByTestId("select-button").findByText(
+                  cy.findByLabelText(/Which collection/).findByText(
                     "Second collection",
                   );
                 });
@@ -65,7 +65,7 @@ describe("collection permissions", () => {
                       cy.icon("add").click();
                     });
                     popover().findByText("Dashboard").click();
-                    cy.findByTestId("select-button").findByText(
+                    cy.findByLabelText(/Which collection/).findByText(
                       "Our analytics",
                     );
                   });
@@ -433,7 +433,7 @@ describe("collection permissions", () => {
     // eslint-disable-next-line no-unscoped-text-selectors -- deprecated usage
     cy.findByText("Save").click();
 
-    cy.findByTestId("select-button").findByText("Our analytics");
+    cy.findByLabelText(/Which collection/).findByText("Our analytics");
   });
 
   it("should load the collection permissions admin pages", () => {
