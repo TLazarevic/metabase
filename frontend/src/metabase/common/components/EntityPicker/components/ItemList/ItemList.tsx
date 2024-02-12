@@ -62,7 +62,7 @@ export const ItemList = ({
                 }
                 label={item.name}
                 active={isSelected}
-                icon={<Icon name={isFolder ? "folder" : getIcon(item)} />}
+                icon={<Icon {...getIcon(item)} />}
                 onClick={e => {
                   e.preventDefault(); // prevent form submission
                   e.stopPropagation(); // prevent parent onClick
