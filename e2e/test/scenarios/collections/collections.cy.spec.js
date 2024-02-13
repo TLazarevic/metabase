@@ -23,6 +23,7 @@ import {
   getPinnedSection,
   moveOpenedCollectionTo,
   pickEntity,
+  entityPickerModal,
 } from "e2e/support/helpers";
 
 import { displaySidebarChildOf } from "./helpers/e2e-collections-sidebar.js";
@@ -366,7 +367,8 @@ describe("scenarios > collection defaults", () => {
         // eslint-disable-next-line no-unscoped-text-selectors -- deprecated usage
         cy.findByText(revokedUsersPersonalCollectionName).click();
         pickEntity({ path: [revokedUsersPersonalCollectionName] });
-        pickEntity({ path: ["Our Analytics", "Child"] });
+        pickEntity({ path: ["Collections", "Child"] });
+        entityPickerModal().button("Select").should("be.enabled");
         cy.log("Reported failing from v0.34.3");
         cy.findByTestId("entity-picker-modal")
           .findByText("Parent")
