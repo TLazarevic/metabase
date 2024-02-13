@@ -52,6 +52,10 @@ export const RootItemList = ({
           ...rootCollection,
           model: "collection",
           location: "/",
+          name:
+            options.namespace === "snippets"
+              ? t`Top folder`
+              : rootCollection.name,
         });
       } else if (rootCollectionError) {
         collectionsData.push({
