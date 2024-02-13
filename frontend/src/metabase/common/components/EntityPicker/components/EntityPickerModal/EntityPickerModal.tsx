@@ -89,7 +89,7 @@ export function EntityPickerModal({
     >
       <Modal.Overlay />
       <ModalContent h="100%">
-        <Modal.Header px="2rem" pt="1rem" pb={hasTabs ? "1rem" : "1.5rem"}>
+        <Modal.Header px="1.5rem" pt="1rem" pb={hasTabs ? "1rem" : "1.5rem"}>
           <GrowFlex justify="space-between">
             <Modal.Title lh="2.5rem">{title}</Modal.Title>
             {options.showSearch && (
@@ -102,7 +102,10 @@ export function EntityPickerModal({
               />
             )}
           </GrowFlex>
-          <Modal.CloseButton />
+          <Modal.CloseButton
+            size={21}
+            style={{ position: "relative", top: "1px" }}
+          />
         </Modal.Header>
         <ModalBody p="0">
           <ErrorBoundary>

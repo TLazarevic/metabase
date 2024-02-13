@@ -98,7 +98,7 @@ const CollectionPickerComponent = ({
 };
 
 export const CollectionPicker = Object.assign(CollectionPickerComponent, {
-  displayName: t`Collection`,
+  displayName: t`Collections`,
   model: "collection",
   icon: "folder",
 });

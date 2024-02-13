@@ -37,7 +37,7 @@ export const TabsView = ({
         flexDirection: "column",
       }}
     >
-      <Tabs.List px="md">
+      <Tabs.List px="1rem">
         {tabs.map(tab => {
           const { name, icon, displayName } = tab;
 

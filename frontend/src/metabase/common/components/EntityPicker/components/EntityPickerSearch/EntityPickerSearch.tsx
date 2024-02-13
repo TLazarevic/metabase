@@ -54,7 +54,7 @@ export function EntityPickerSearchInput({
       type="search"
       icon={<Icon name="search" size={16} />}
       miw={400}
-      mr="lg"
+      mr="2rem"
       value={searchQuery}
       onChange={e => setSearchQuery(e.target.value ?? "")}
       placeholder={t`Search…`}

@@ -4,5 +4,5 @@ import { Box } from "metabase/ui";
 export const PickerColumn = styled(Box)`
   width: 100%;
   flex-basis: 310px;
-  padding: 1rem 1rem 1rem 1.5rem;
+  padding: 1rem;
 `;

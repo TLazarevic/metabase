@@ -8,15 +8,18 @@ export const getNavLinkOverrides = (): MantineThemeOverride["components"] => ({
         root: {
           borderRadius: rem(8),
 
-
           "&:hover": {
-            backgroundColor: theme.fn.themeColor("background"),
-            ".emotion-NavLink-label, .emotion-NavLink-icon": {
-              color: "white",
-            },
+            backgroundColor: theme.fn.themeColor("brand-lighter"),
+            // ".emotion-NavLink-label, .emotion-NavLink-icon": {
+            //   color: "white",
+            // },
           },
 
           "&[data-active]": {
+            "&:hover": {
+              backgroundColor: theme.fn.themeColor("brand"),
+            },
+
             backgroundColor: theme.fn.themeColor("brand"),
             color: "white",
 

@@ -1,5 +1,8 @@
-import { Box, Text, NavLink, Loader, Center, Icon } from "metabase/ui";
+import { t } from "ttag";
+import { Box, Text, NavLink, Loader, Center, Icon, Flex } from "metabase/ui";
 import { VariableSizeItemsVirtualizedList } from "metabase/components/VirtualizedList";
+import { CollectionEmptyIcon } from "metabase/collections/components/CollectionEmptyState/CollectionEmptyState";
+import { color } from "metabase/lib/colors";
 import type { PickerItem } from "../../types";
 import { getIcon, isSelectedItem } from "../../utils";
 import { PickerColumn } from "./ItemList.styled";
@@ -33,11 +36,12 @@ export const ItemList = ({
 
   if (!items.length) {
     return (
-      <Box miw={310}>
-        <Text align="center" p="lg">
-          No items
+      <Flex justify="center" align="center" direction="column" h="100%">
+        <CollectionEmptyIcon height={47} />
+        <Text align="center" p="lg" fw={700} color={color("text-light")}>
+          {t`No ${folderModel}s here`}
         </Text>
-      </Box>
+      </Flex>
     );
   }
 

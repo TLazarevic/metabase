@@ -118,7 +118,12 @@ function FormCollectionPicker({
           onClick={() => setIsPickerOpen(true)}
           fullWidth
           rightIcon={<Icon name="ellipsis" />}
-          styles={{ inner: { justifyContent: "space-between" } }}
+          styles={{
+            inner: {
+              justifyContent: "space-between",
+            },
+            root: { "&:active": { transform: "none" } },
+          }}
         >
           {isValidCollectionId(value) ? (
             <ItemName id={value} type={type} />
