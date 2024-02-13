@@ -1,12 +1,5 @@
-import {
-  Box,
-  Text,
-  ScrollArea,
-  NavLink,
-  Loader,
-  Center,
-  Icon,
-} from "metabase/ui";
+import { Box, Text, NavLink, Loader, Center, Icon } from "metabase/ui";
+import { VariableSizeItemsVirtualizedList } from "metabase/components/VirtualizedList";
 import type { PickerItem } from "../../types";
 import { getIcon, isSelectedItem } from "../../utils";
 import { PickerColumn } from "./ItemList.styled";
@@ -49,32 +42,30 @@ export const ItemList = ({
   }
 
   return (
-    <ScrollArea h="100%">
-      <PickerColumn>
-        {items.map(item => {
-          const isFolder = folderModel.includes(item.model);
-          const isSelected = isSelectedItem(item, selectedItem);
-          return (
-            <div key={`${item.model ?? "collection"}-${item.id}`}>
-              <NavLink
-                rightSection={
-                  isFolder ? <Icon name="chevronright" size={10} /> : null
-                }
-                label={item.name}
-                active={isSelected}
-                icon={<Icon {...getIcon(item)} />}
-                onClick={e => {
-                  e.preventDefault(); // prevent form submission
-                  e.stopPropagation(); // prevent parent onClick
-                  onClick(item);
-                }}
-                variant="light"
-                mb="xs"
-              />
-            </div>
-          );
-        })}
-      </PickerColumn>
-    </ScrollArea>
+    <VariableSizeItemsVirtualizedList Wrapper={PickerColumn}>
+      {items.map(item => {
+        const isFolder = folderModel.includes(item.model);
+        const isSelected = isSelectedItem(item, selectedItem);
+        return (
+          <div key={`${item.model ?? "collection"}-${item.id}`}>
+            <NavLink
+              rightSection={
+                isFolder ? <Icon name="chevronright" size={10} /> : null
+              }
+              label={item.name}
+              active={isSelected}
+              icon={<Icon {...getIcon(item)} />}
+              onClick={e => {
+                e.preventDefault(); // prevent form submission
+                e.stopPropagation(); // prevent parent onClick
+                onClick(item);
+              }}
+              variant="light"
+              mb="xs"
+            />
+          </div>
+        );
+      })}
+    </VariableSizeItemsVirtualizedList>
   );
 };
