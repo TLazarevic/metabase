@@ -31,7 +31,7 @@ export const NewCollectionDialog = ({
     await dispatch(
       Collections.actions.create({
         name,
-        parent_id: parentCollectionId,
+        parent_id: parentCollectionId === "root" ? null : parentCollectionId,
       }),
     );
     onClose();

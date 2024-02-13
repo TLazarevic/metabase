@@ -307,10 +307,14 @@ describe("scenarios > question > new", () => {
       cy.findByLabelText(/Name of new folder/).type(NEW_COLLECTION);
       cy.findByText("Create").click();
     });
+    entityPickerModal().findByText("Foo").click();
     entityPickerModal().findByText("Select").click();
     modal().within(() => {
       cy.findByText("Save new question");
-      cy.findByTestId("select-button").should("have.text", NEW_COLLECTION);
+      cy.findByLabelText(/Which collection/).should(
+        "have.text",
+        NEW_COLLECTION,
+      );
       cy.findByText("Save").click();
     });
     cy.get("header").findByText(NEW_COLLECTION);
@@ -324,6 +328,7 @@ describe("scenarios > question > new", () => {
       name: "Dashboard in root collection",
     };
     const myPersonalCollection = "My personal collection";
+    const myPersonalCollectionName = "Bobby Tables's Personal Collection";
 
     beforeEach(() => {
       cy.intercept("POST", "/api/card").as("createQuestion");
@@ -343,8 +348,11 @@ describe("scenarios > question > new", () => {
       });
 
       queryBuilderHeader().button("Save").click();
-      modal().findByTestId("select-button").click();
-      popover().findByText("My personal collection").click();
+      modal()
+        .findByLabelText(/Which collection/)
+        .click();
+      entityPickerModal().findByText(myPersonalCollectionName).click();
+      entityPickerModal().findByText("Select").click();
       modal().within(() => {
         cy.button("Save").click();
         cy.wait("@createQuestion");

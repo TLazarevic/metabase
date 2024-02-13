@@ -65,7 +65,7 @@ export const RootItemList = ({
         });
       } else if (rootCollectionError) {
         collectionsData.push({
-          name: t`Our Analytics`,
+          name: t`Collections`,
           id: "root",
           description: null,
           can_write: false,
