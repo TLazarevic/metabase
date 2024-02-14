@@ -1,27 +1,24 @@
 import { Tabs, Icon } from "metabase/ui";
 
+import type { SearchResult } from "metabase-types/api";
 import {
   EntityPickerSearchTab,
   EntityPickerSearchResults,
 } from "../EntityPickerSearch";
 
-import type { EntityPickerOptions, EntityTab, PickerItem } from "../../types";
+import type { EntityTab, PickerItem } from "../../types";
 
 export const TabsView = ({
   tabs,
   onItemSelect,
-  value,
-  options,
   searchQuery,
   searchResults,
   selectedItem,
 }: {
   tabs: EntityTab[];
   onItemSelect: (item: PickerItem) => void;
-  value?: PickerItem;
-  options: EntityPickerOptions;
   searchQuery: string;
-  searchResults: PickerItem[] | null;
+  searchResults: SearchResult[] | null;
   selectedItem: PickerItem | null;
 }) => {
   const hasSearchTab = !!searchQuery;
@@ -39,10 +36,14 @@ export const TabsView = ({
     >
       <Tabs.List px="1rem">
         {tabs.map(tab => {
-          const { name, icon, displayName } = tab;
+          const { model, icon, displayName } = tab;
 
           return (
-            <Tabs.Tab key={name} value={name} icon={<Icon name={icon} />}>
+            <Tabs.Tab
+              key={model}
+              value={displayName}
+              icon={<Icon name={icon} />}
+            >
               {displayName}
             </Tabs.Tab>
           );
@@ -55,19 +56,19 @@ export const TabsView = ({
         )}
       </Tabs.List>
 
-      {tabs.map(Tab => {
-        const { name } = Tab;
+      {tabs.map(tab => {
+        const { displayName, model } = tab;
 
         return (
           <Tabs.Panel
-            key={name}
-            value={name}
+            key={model}
+            value={displayName}
             style={{
               flexGrow: 1,
               height: 0,
             }}
           >
-            <Tab onItemSelect={onItemSelect} value={value} options={options} />
+            {tab.element}
           </Tabs.Panel>
         );
       })}

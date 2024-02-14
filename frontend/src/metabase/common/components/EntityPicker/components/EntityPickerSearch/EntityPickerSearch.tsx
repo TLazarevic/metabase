@@ -12,6 +12,7 @@ import { useDispatch } from "metabase/lib/redux";
 
 import Search from "metabase/entities/search";
 import { SearchLoadingSpinner } from "metabase/nav/components/search/SearchResults";
+import type { PickerItem } from "../../types";
 
 const defaultSearchFilter = (results: SearchResultType[]) => results;
 
@@ -69,7 +70,7 @@ export const EntityPickerSearchResults = ({
 }: {
   searchResults: SearchResultType[] | null;
   onItemSelect: (item: WrappedResult) => void;
-  selectedItem: SearchResultType | null;
+  selectedItem: PickerItem | null;
 }) => {
   const dispatch = useDispatch();
 

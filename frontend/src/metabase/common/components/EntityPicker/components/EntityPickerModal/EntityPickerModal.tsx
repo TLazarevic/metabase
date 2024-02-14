@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { t } from "ttag";
 
 import { Modal } from "metabase/ui";
@@ -6,11 +6,9 @@ import ErrorBoundary from "metabase/ErrorBoundary";
 import type { SearchResult } from "metabase-types/api";
 import { useModalOpen } from "metabase/hooks/use-modal-open";
 
-import type { EntityPickerOptions, EntityTab } from "../../types";
+import type { EntityPickerOptions, EntityTab, PickerItem } from "../../types";
 import { EntityPickerSearchInput } from "../EntityPickerSearch/EntityPickerSearch";
 
-import { CollectionPicker } from "../../SpecificEntityPickers/CollectionPicker";
-import { NewCollectionDialog } from "./NewCollectionDialog";
 import { ButtonBar } from "./ButtonBar";
 import { TabsView } from "./TabsView";
 import { SinglePickerView } from "./SinglePickerView";
@@ -24,7 +22,7 @@ export type EntityPickerModalOptions = {
   allowCreateNew?: boolean;
 };
 
-const defaultOptions: EntityPickerModalOptions = {
+export const defaultOptions: EntityPickerModalOptions = {
   showPersonalCollection: true,
   showRootCollection: true,
   showSearch: true,
@@ -32,51 +30,35 @@ const defaultOptions: EntityPickerModalOptions = {
   allowCreateNew: true,
 };
 
-interface EntityPickerModalProps {
+export interface EntityPickerModalProps {
   title: string;
-  value?: Partial<SearchResult>;
-  onChange: (item: SearchResult) => void;
+  selectedItem: PickerItem | null;
+  onConfirm: () => void;
+  onItemSelect: (item: PickerItem) => void;
   onClose: () => void;
   tabs: EntityTab[];
   options?: EntityPickerOptions;
   searchResultFilter?: (results: SearchResult[]) => SearchResult[];
+  actions?: JSX.Element[];
 }
 
 export function EntityPickerModal({
   title = t`Choose an item`,
-  onChange,
+  onItemSelect,
+  onConfirm,
+  selectedItem,
   onClose,
   tabs,
-  value,
   options = defaultOptions,
+  actions = [],
   searchResultFilter,
 }: EntityPickerModalProps) {
-  const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(
     null,
   );
 
   const { open } = useModalOpen();
-
-  const handleItemSelect = useCallback(
-    (item: SearchResult) => {
-      if (options.hasConfirmButtons) {
-        setSelectedItem(item);
-      } else {
-        onChange(item);
-      }
-    },
-    [onChange, options],
-  );
-
-  const handleConfirm = () => {
-    if (selectedItem) {
-      onChange(selectedItem);
-    }
-  };
 
   const hasTabs = tabs.length > 1 || searchQuery;
   const tabModels = useMemo(() => tabs.map(t => t.model), [tabs]);
@@ -112,65 +94,25 @@ export function EntityPickerModal({
             {hasTabs ? (
               <TabsView
                 tabs={tabs}
-                onItemSelect={handleItemSelect}
-                value={value}
+                onItemSelect={onItemSelect}
                 searchQuery={searchQuery}
                 searchResults={searchResults}
-                options={options}
                 selectedItem={selectedItem}
               />
             ) : (
-              <SinglePickerView
-                TabComponent={tabs[0]}
-                onItemSelect={handleItemSelect}
-                value={value}
-                options={options}
-              />
+              <SinglePickerView tab={tabs[0]} />
             )}
             {!!options.hasConfirmButtons && (
               <ButtonBar
-                onConfirm={handleConfirm}
+                onConfirm={onConfirm}
                 onCancel={onClose}
                 canConfirm={!!selectedItem && selectedItem?.can_write !== false}
-                allowCreateNew={options.allowCreateNew}
-                currentCollection={selectedItem}
-                onCreateNew={() => setCreateDialogOpen(true)}
+                actions={actions}
               />
             )}
           </ErrorBoundary>
         </ModalBody>
-        <NewCollectionDialog
-          isOpen={createDialogOpen}
-          onClose={() => setCreateDialogOpen(false)}
-          parentCollectionId={selectedItem?.id || value?.id || "root"}
-        />
       </ModalContent>
     </Modal.Root>
   );
 }
-
-export const CollectionPickerModal = ({
-  title = t`Choose a collection`,
-  onChange,
-  onClose,
-  value,
-  options = defaultOptions,
-}: Omit<EntityPickerModalProps, "tabs">) => {
-  const searchFilter = useCallback(
-    searchResults =>
-      searchResults.filter((result: SearchResult) => result.can_write),
-    [],
-  );
-
-  return (
-    <EntityPickerModal
-      title={title}
-      onChange={onChange}
-      onClose={onClose}
-      value={value}
-      tabs={[CollectionPicker]}
-      options={options}
-      searchResultFilter={searchFilter}
-    />
-  );
-};

@@ -81,9 +81,6 @@ export const RootItemList = ({
       currentUser &&
       !!personalCollection
     ) {
-      // const personalCollection = await CollectionsApi.get({
-      //   id: currentUser.personal_collection_id,
-      // });
       collectionsData.push({
         ...personalCollection,
         model: "collection",

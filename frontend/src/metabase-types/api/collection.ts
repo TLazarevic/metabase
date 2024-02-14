@@ -56,7 +56,7 @@ export interface Collection {
   personal_owner_id?: UserId;
   is_personal?: boolean;
 
-  location?: string;
+  location: string | null;
   effective_location?: string; // location with only user-accessible collections
   effective_ancestors?: Collection[];
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { t } from "ttag";
 import type { CollectionId, CollectionItem } from "metabase-types/api";
 
 import { useCollectionQuery } from "metabase/common/hooks";
@@ -23,13 +22,13 @@ const defaultOptions: CollectionPickerOptions = {
 
 interface CollectionPickerProps {
   onItemSelect: (item: PickerItem) => void;
-  value?: PickerItem;
+  initialValue?: Partial<PickerItem>;
   options?: CollectionPickerOptions;
 }
 
-const CollectionPickerComponent = ({
+export const CollectionPicker = ({
   onItemSelect,
-  value,
+  initialValue,
   options = defaultOptions,
 }: CollectionPickerProps) => {
   const [path, setPath] = useState<PickerState<PickerItem>>(() =>
@@ -40,7 +39,10 @@ const CollectionPickerComponent = ({
   );
 
   const { data: currentCollection, isLoading: loadingCurrentCollection } =
-    useCollectionQuery({ id: value?.id || "root", enabled: !!value?.id });
+    useCollectionQuery({
+      id: initialValue?.id || "root",
+      enabled: !!initialValue?.id,
+    });
 
   const userPersonalCollectionId = useSelector(getUserPersonalCollectionId);
 
@@ -97,12 +99,6 @@ const CollectionPickerComponent = ({
   );
 };
 
-export const CollectionPicker = Object.assign(CollectionPickerComponent, {
-  displayName: t`Collections`,
-  model: "collection",
-  icon: "folder",
-});
-
 const getCollectionIdPath = (
   collection: Pick<
     CollectionItem,
@@ -127,13 +123,13 @@ const getCollectionIdPath = (
     return ["personal"];
   }
 
-  if (collection.is_personal) {
-    return isInUserPersonalCollection
-      ? [...pathFromRoot, collection.id]
-      : ["personal", ...pathFromRoot, collection.id];
+  if (isInUserPersonalCollection) {
+    return [...pathFromRoot, collection.id];
+  } else if (collection.is_personal) {
+    return ["personal", ...pathFromRoot, collection.id];
+  } else {
+    return ["root", ...pathFromRoot, collection.id];
   }
-
-  return ["root", ...pathFromRoot, collection.id];
 };
 
 const getStateFromIdPath = ({
@@ -143,8 +139,6 @@ const getStateFromIdPath = ({
   idPath: CollectionId[];
   namespace?: "snippets";
 }): PickerState<PickerItem> => {
-  // TODO: handle collections buried in another user's personal collection 😱
-
   const statePath: PickerState<PickerItem> = [
     {
       selectedItem: {

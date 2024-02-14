@@ -1,22 +1,17 @@
 import { t } from "ttag";
-import type { SearchResult } from "metabase-types/api";
-import { Button, Flex, Icon } from "metabase/ui";
+import { Button, Flex } from "metabase/ui";
 import { color } from "metabase/lib/colors";
 
 export const ButtonBar = ({
   onConfirm,
   onCancel,
   canConfirm,
-  allowCreateNew,
-  currentCollection,
-  onCreateNew,
+  actions,
 }: {
   onConfirm: () => void;
   onCancel: () => void;
   canConfirm?: boolean;
-  allowCreateNew?: boolean;
-  currentCollection?: SearchResult | null;
-  onCreateNew?: () => void;
+  actions: JSX.Element[];
 }) => (
   <Flex
     justify="space-between"
@@ -25,17 +20,7 @@ export const ButtonBar = ({
       borderTop: `1px solid ${color("border")}`,
     }}
   >
-    <Flex gap="md">
-      {!!allowCreateNew && !!onCreateNew && (
-        <Button
-          onClick={onCreateNew}
-          leftIcon={<Icon name="add" />}
-          disabled={currentCollection?.can_write === false}
-        >
-          {t`Create a new collection`}
-        </Button>
-      )}
-    </Flex>
+    <Flex gap="md">{actions}</Flex>
     <Flex gap="md">
       <Button onClick={onCancel}>{t`Cancel`}</Button>
       <Button
