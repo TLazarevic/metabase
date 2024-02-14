@@ -9,6 +9,8 @@ import {
   KBarResults,
   KBarSearch,
   useMatches,
+  useKBar,
+  useRegisterActions,
 } from "kbar";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
 import { useSelector } from "metabase/lib/redux";
@@ -18,6 +20,7 @@ import type { PaletteAction } from "../hooks/useCommandPalette";
 import { useCommandPalette } from "../hooks/useCommandPalette";
 
 import {
+  PaletteInput,
   PaletteModal,
   PaletteResult,
   PaletteResultList,
@@ -75,49 +78,13 @@ export const Palette = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  // const [pages, setPages] = useState<PalettePageId[]>(["root"]);
-
-  const query = useSelector(getPaletteQuery) || "";
-
-  // The search text is the string used to get search results
-  const [debouncedSearchText, setDebouncedSearchText] = useState(query);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useDebounce(
-    () => {
-      setDebouncedSearchText(query.trim());
-    },
-    SEARCH_DEBOUNCE_DURATION,
-    [query],
-  );
-
-  const { rootPageActions, adminSettingsActions } = useCommandPalette({
-    query,
-    debouncedSearchText,
-    // setPages,
-  });
-
-  useEffect(() => {
-    if (!inputRef.current) {
-      return;
-    }
-    inputRef.current.setAttribute("autocomplete", "off");
-  }, [inputRef]);
-
-  // const page = pages[pages.length - 1];
-  const allActions: PaletteAction[] = [
-    ...rootPageActions,
-    ...adminSettingsActions,
-  ];
-
   return (
-    <KBarProvider actions={allActions}>
+    <KBarProvider actions={[]}>
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator>
             <PaletteModal>
-              <KBarSearch />
+              <PaletteInput />
               <PaletteResults />
               <PaletteFooter />
             </PaletteModal>
@@ -161,7 +128,56 @@ export const Palette = ({
 };
 
 export const PaletteResults = () => {
+
+  // const [pages, setPages] = useState<PalettePageId[]>(["root"]);
+
+  const query = useSelector(getPaletteQuery);
+
+  // The search text is the string used to get search results
+  const [debouncedSearchText, setDebouncedSearchText] = useState(query);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useDebounce(
+    () => {
+      setDebouncedSearchText(query.trim());
+    },
+    SEARCH_DEBOUNCE_DURATION,
+    [query],
+  );
+
+  const { rootPageActions, adminSettingsActions } = useCommandPalette({
+    query,
+    debouncedSearchText,
+    // setPages,
+  });
+
+  // const page = pages[pages.length - 1];
+  const allActions: PaletteAction[] = [
+    ...rootPageActions,
+    ...adminSettingsActions,
+  ];
+  useRegisterActions(allActions, allActions);
+
+  useEffect(() => {
+    if (!inputRef.current) {
+      return;
+    }
+    inputRef.current.setAttribute("autocomplete", "off");
+  }, [inputRef]);
+
   const { results } = useMatches();
+  // const { query, search, actions, currentRootActionId, activeIndex, options } =
+  //   useKBar(state => ({
+  //     search: state.searchQuery,
+  //     currentRootActionId: state.currentRootActionId,
+  //     actions: state.actions,
+  //     activeIndex: state.activeIndex,
+  //   }));
+
+  // console.log("query", query);
+  // console.log("search", search);
+  // console.log("actions", actions);
 
   return (
     <PaletteResultList>

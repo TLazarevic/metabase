@@ -68,35 +68,34 @@ export const useCommandPalette = ({
     dispatch(reloadSettings());
   }, [dispatch]);
 
-  const adminSectionsSearchMap = useMemo(
-    () =>
-      Object.keys(adminSections).reduce<AdminSetting[]>((memo, key) => {
-        const settings: AdminSetting[] = adminSections[key].settings || [];
-        const path = `/admin/settings/${key}`;
-        const acc: AdminSetting[] = [
-          ...memo,
-          ...settings
-            .filter(s => s.display_name)
-            .map(s => ({
-              name: s.display_name || "",
-              description: s.description,
-              path,
-              key: s.key,
-              display_name: `${key[0].toUpperCase()}${key.slice(1)} / ${
-                s.display_name
-              }`,
-            })),
-        ];
-        return acc;
-      }, []),
-    [adminSections],
-  );
+  const adminSectionsSearchMap = useMemo(() => {
+    return Object.keys(adminSections).reduce<AdminSetting[]>((memo, key) => {
+      const settings: AdminSetting[] = adminSections[key].settings || [];
+      const path = `/admin/settings/${key}`;
+      const acc: AdminSetting[] = [
+        ...memo,
+        ...settings
+          .filter(s => s.display_name)
+          .map(s => ({
+            name: s.display_name || "",
+            description: s.description,
+            path,
+            key: s.key,
+            display_name: `${key[0].toUpperCase()}${key.slice(1)} / ${
+              s.display_name
+            }`,
+          })),
+      ];
+      return acc;
+    }, []);
+  }, [adminSections]);
 
   const filteredAdmin = useMemo(
-    () =>
-      adminSectionsSearchMap.filter(x =>
+    () => {
+      return adminSectionsSearchMap.filter(x =>
         x.display_name?.toLowerCase().includes(query?.toLowerCase() ?? ""),
-      ),
+      )
+    },
     [query, adminSectionsSearchMap],
   );
 
@@ -123,9 +122,11 @@ export const useCommandPalette = ({
   const rootPageActions = useMemo<PaletteAction[]>(() => {
     let actions: PaletteAction[] = [];
     if (contextualActions.length) {
-      actions = contextualActions.filter(({ name }) =>
-        query ? name.toLowerCase().includes(query.toLowerCase()) : true,
-      );
+      // for now, don't filter here because kbar uses useMatches()
+      // actions = contextualActions.filter(({ name }) =>
+      //   query ? name.toLowerCase().includes(query.toLowerCase()) : true,
+      // );
+      actions = contextualActions;
     }
 
     actions = [
@@ -164,7 +165,7 @@ export const useCommandPalette = ({
       },
       {
         id: "admin_settings",
-        name: t`Admin settings!!`,
+        name: t`Admin settings`,
         icon: () => <Icon name="gear" />,
         // perform: () => {
         //   dispatch(setPaletteQuery(""));
@@ -197,7 +198,9 @@ export const useCommandPalette = ({
         },
       },
     ];
-    const filteredRootPageActions = filterItems(actions, query);
+    // const filteredRootPageActions = filterItems(actions, query);
+    // temporary fix for kbar issue
+    const filteredRootPageActions = actions;
 
     let searchItems: PaletteAction[] = [];
     if (isSearchLoading) {
@@ -261,31 +264,25 @@ export const useCommandPalette = ({
     debouncedSearchText,
   ]);
 
-  const adminSettingsActions: PaletteAction[] = [
-    {
-      parent: "admin_settings",
-      id: "back",
-      name: t`Back`,
-      icon: () => <Icon name="arrow_left" />,
-      perform: () => {
-        // TODO: Make this go back to the root
-        //setPage("root");
-      },
-    },
-    ...filteredAdmin.map(s => ({
-      parent: "admin_settings",
-      id: s.display_name,
-      name: s.display_name,
-      icon: () => <Icon name="gear" />,
-      perform: () =>
-        dispatch(
-          push({
-            pathname: s.path,
-            hash: `#${s.key}`,
-          }),
-        ),
-    })),
-  ];
+  const adminSettingsActions: PaletteAction[] = useMemo(() => {
+    return [
+      ...filteredAdmin.map(s => ({
+        parent: "admin_settings",
+        id: s.display_name,
+        name: s.display_name,
+        keywords: s.display_name,
+        icon: () => <Icon name="gear" />,
+        perform: () => {
+          dispatch(
+            push({
+              pathname: s.path,
+              hash: `#${s.key}`,
+            }),
+          );
+        },
+      })),
+    ];
+  }, [filteredAdmin, dispatch]);
 
   return {
     rootPageActions,

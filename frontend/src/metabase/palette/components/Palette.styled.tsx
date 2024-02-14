@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { Button, Icon, TextInput } from "metabase/ui";
 import Modal from "metabase/components/Modal";
+import {KBarSearch} from "kbar";
 
 export const PaletteModal = styled(Modal)`
   // Stolen from Github
@@ -47,8 +48,6 @@ export const PaletteResult = styled.li<{ active?: boolean }>`
   }
 `;
 
-export const PaletteInput = styled(TextInput)``;
-
 export const PaletteResultIcon = styled(Icon)`
   margin-right: 0.5rem;
 `;
@@ -77,3 +76,7 @@ export const PaletteModalContainer = styled.div`
 //     font-weight: bold !important;
 //   }
 // `;
+
+export const PaletteInput = styled(KBarSearch)`
+  padding: .5rem;
+`
