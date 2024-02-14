@@ -101,26 +101,23 @@ function App({
   return (
     <ErrorBoundary onError={onError}>
       <ScrollToTop>
-        <Palette>
-          <AppContainer className="spread">
-            <AppBanner location={location} />
-            {isAppBarVisible && <AppBar />}
-            <AppContentContainer isAdminApp={isAdminApp}>
-              {isNavBarEnabled && <Navbar />}
-              <AppContent ref={setViewportElement}>
-                <ContentViewportContext.Provider
-                  value={viewportElement ?? null}
-                >
-                  {errorPage ? getErrorComponent(errorPage) : children}
-                </ContentViewportContext.Provider>
-              </AppContent>
-              <UndoListing />
-              <StatusListing />
-              <NewModals />
-            </AppContentContainer>
-          </AppContainer>
-        </Palette>
+        <AppContainer className="spread">
+          <AppBanner location={location} />
+          {isAppBarVisible && <AppBar />}
+          <AppContentContainer isAdminApp={isAdminApp}>
+            {isNavBarEnabled && <Navbar />}
+            <AppContent ref={setViewportElement}>
+              <ContentViewportContext.Provider value={viewportElement ?? null}>
+                {errorPage ? getErrorComponent(errorPage) : children}
+              </ContentViewportContext.Provider>
+            </AppContent>
+            <UndoListing />
+            <StatusListing />
+            <NewModals />
+          </AppContentContainer>
+        </AppContainer>
       </ScrollToTop>
+      <Palette />
     </ErrorBoundary>
   );
 }

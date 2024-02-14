@@ -36,9 +36,9 @@ export type PalettePageId = "root" | "admin_settings";
 
 type AdminSetting = {
   key: string;
-  name: string;
+  display_name: string;
   description: string | null;
-  type: "string";
+  type?: "string";
   path: string;
 };
 
@@ -52,7 +52,10 @@ export const useCommandPalette = ({
   // setPages: Dispatch<SetStateAction<PalettePageId[]>>;
 }) => {
   const dispatch = useDispatch();
-  const adminSections = useSelector<Record<string, AdminSetting>>(getSections);
+  const adminSections =
+    useSelector<Record<string, { name: string; settings: AdminSetting[] }>>(
+      getSections,
+    );
 
   // const setPage = useCallback(
   //   (page: PalettePageId) => {
@@ -68,23 +71,23 @@ export const useCommandPalette = ({
   const adminSectionsSearchMap = useMemo(
     () =>
       Object.keys(adminSections).reduce<AdminSetting[]>((memo, key) => {
-        const settings = adminSections[key].settings || [];
+        const settings: AdminSetting[] = adminSections[key].settings || [];
         const path = `/admin/settings/${key}`;
-
-        return [
+        const acc: AdminSetting[] = [
           ...memo,
           ...settings
-            .filter(s => s.name)
+            .filter(s => s.display_name)
             .map(s => ({
-              name: s.name || "",
+              name: s.display_name || "",
               description: s.description,
               path,
               key: s.key,
-              displayName: `${key[0].toUpperCase()}${key.slice(1)} / ${
+              display_name: `${key[0].toUpperCase()}${key.slice(1)} / ${
                 s.display_name
               }`,
             })),
         ];
+        return acc;
       }, []),
     [adminSections],
   );
@@ -92,7 +95,7 @@ export const useCommandPalette = ({
   const filteredAdmin = useMemo(
     () =>
       adminSectionsSearchMap.filter(x =>
-        x.name?.toLowerCase().includes(query?.toLowerCase() ?? ""),
+        x.display_name?.toLowerCase().includes(query?.toLowerCase() ?? ""),
       ),
     [query, adminSectionsSearchMap],
   );
@@ -271,8 +274,8 @@ export const useCommandPalette = ({
     },
     ...filteredAdmin.map(s => ({
       parent: "admin_settings",
-      id: s.name,
-      name: s.name,
+      id: s.display_name,
+      name: s.display_name,
       icon: () => <Icon name="gear" />,
       perform: () =>
         dispatch(
