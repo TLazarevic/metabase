@@ -10,6 +10,7 @@ import upload from "metabase/redux/uploads";
 import { modal } from "metabase/redux/ui";
 import { reducer as auth } from "metabase/redux/auth";
 import entities, { enhanceRequestsReducer } from "metabase/redux/entities";
+import palette from "metabase/redux/palette";
 
 /* user */
 import { currentUser } from "metabase/redux/user";
@@ -27,4 +28,5 @@ export default {
   upload,
   auth,
   modal,
+  palette,
 };

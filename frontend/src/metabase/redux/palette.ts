@@ -3,7 +3,7 @@ import {
   createAction,
   handleActions,
 } from "metabase/lib/redux";
-import type { CommandPaletteAction } from "metabase/palette/hooks/useCommandPalette";
+import type { PaletteAction } from "metabase/palette/hooks/useCommandPalette";
 
 export const REGISTER_PALETTE_ACTION = "metabase/app/REGISTER_PALETTE_ACTION";
 export const UNREGISTER_PALETTE_ACTION =
@@ -21,21 +21,20 @@ const paletteActions = handleActions<string, string>(
   "",
 );
 
-const contextualActions = handleActions<
-  CommandPaletteAction[],
-  CommandPaletteAction
->(
+const contextualActions = handleActions<PaletteAction[], PaletteAction>(
   {
     [REGISTER_PALETTE_ACTION]: (
-      state: CommandPaletteAction[],
-      { payload }: { payload: CommandPaletteAction },
-    ) => [...state, payload],
+      state: PaletteAction[],
+      { payload }: { payload: PaletteAction },
+    ) => {
+      return [...state, payload];
+    },
     [UNREGISTER_PALETTE_ACTION]: (
-      state: CommandPaletteAction[],
-      { payload }: { payload: CommandPaletteAction },
+      state: PaletteAction[],
+      { payload }: { payload: PaletteAction },
     ) => state.filter(item => item.id !== payload.id),
   },
-  [] as CommandPaletteAction[],
+  [] as PaletteAction[],
 );
 
 // eslint-disable-next-line import/no-default-export -- deprecated usage

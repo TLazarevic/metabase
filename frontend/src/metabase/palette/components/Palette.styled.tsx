@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Button, Icon, TextInput } from "metabase/ui";
 import Modal from "metabase/components/Modal";
 import {KBarSearch} from "kbar";
+import {color} from "metabase/lib/colors";
 
 export const PaletteModal = styled(Modal)`
   // Stolen from Github
@@ -18,14 +19,23 @@ export const PaletteModal = styled(Modal)`
   min-height: 50vh;
   // max-height: max(50vh, 570px);
   padding: 1rem;
+  padding-bottom: .25rem;
   display: flex;
 
   // Is this useful? I got it from the palette on notion
   transform: translate3d(0px, 0px, 0px);
 
   // fix later
-  & .ModalBody {
+  .ModalContent {
+    padding-bottom: 0;
+  }
+  .ModalBody {
     padding: 0;
+    flex-grow: 1;
+    display: flex;
+  }
+  #kbar-listbox {
+    height: auto;
   }
   button {
     display: flex;
@@ -34,18 +44,15 @@ export const PaletteModal = styled(Modal)`
 `;
 
 export const PaletteResult = styled.li<{ active?: boolean }>`
+  border-radius: 0.25rem;
   background-color: ${props =>
-    props.active ? "rgba(0, 0, 0, 0.1)" : "transparent"};
+    props.active ? color('brand-light') : "transparent"};
   list-style: none;
   display: flex;
+  cursor: pointer;
   width: 100%;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
-  // fix later
-  & button span {
-    display: flex;
-    align-items: center;
-  }
 `;
 
 export const PaletteResultIcon = styled(Icon)`
@@ -63,6 +70,11 @@ export const PaletteResultList = styled.ul`
   flex-flow: column nowrap;
   margin-top: 1rem;
   padding: 0;
+  // hacky fix
+  & > div {
+    height: 100%;
+    //max-height: unset;
+  }
 `;
 
 export const PaletteModalContainer = styled.div`

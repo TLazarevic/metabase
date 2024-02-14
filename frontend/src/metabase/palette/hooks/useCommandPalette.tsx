@@ -1,4 +1,4 @@
-import { t } from "ttag";
+import { jt, t } from "ttag";
 import _ from "underscore";
 // import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useMemo, useEffect } from "react";
@@ -43,11 +43,11 @@ type AdminSetting = {
 };
 
 export const useCommandPalette = ({
-  query,
+  search,
   debouncedSearchText,
 }: // setPages,
 {
-  query: string;
+  search: string;
   debouncedSearchText: string;
   // setPages: Dispatch<SetStateAction<PalettePageId[]>>;
 }) => {
@@ -90,14 +90,11 @@ export const useCommandPalette = ({
     }, []);
   }, [adminSections]);
 
-  const filteredAdmin = useMemo(
-    () => {
-      return adminSectionsSearchMap.filter(x =>
-        x.display_name?.toLowerCase().includes(query?.toLowerCase() ?? ""),
-      )
-    },
-    [query, adminSectionsSearchMap],
-  );
+  const filteredAdmin = useMemo(() => {
+    return adminSectionsSearchMap.filter(x =>
+      x.display_name?.toLowerCase().includes(search?.toLowerCase() ?? ""),
+    );
+  }, [search, adminSectionsSearchMap]);
 
   const openNewModal = useCallback(
     (modalId: string) => {
@@ -134,7 +131,7 @@ export const useCommandPalette = ({
       {
         id: "new_collection",
         name: t`New collection`,
-        icon: () => <Icon name="collection" />,
+        icon: <Icon name="collection" />,
         perform: () => {
           openNewModal("collection");
         },
@@ -142,7 +139,7 @@ export const useCommandPalette = ({
       {
         id: "new_dashboard",
         name: t`New dashboard`,
-        icon: () => <Icon name="dashboard" />,
+        icon: <Icon name="dashboard" />,
         perform: () => {
           openNewModal("dashboard");
         },
@@ -150,7 +147,7 @@ export const useCommandPalette = ({
       {
         id: "new_question",
         name: t`New question`,
-        icon: () => <Icon name="insight" />,
+        icon: <Icon name="insight" />,
         perform: () => {
           dispatch(closeModal());
           dispatch(
@@ -166,30 +163,20 @@ export const useCommandPalette = ({
       {
         id: "admin_settings",
         name: t`Admin settings`,
-        icon: () => <Icon name="gear" />,
-        // perform: () => {
-        //   dispatch(setPaletteQuery(""));
-        //   setPage("admin_settings");
-        // },
+        icon: <Icon name="gear" />,
       },
       {
         id: "search_docs",
-        name: "Search documentation for " + query,
-        // TODO: Bring this rich text back if possible
-        // name: query
-        //   ? jt`${(
-        //       <span>
-        //         Search documentation for&nbsp;
-        //         <strong>&ldquo;{query}&rdquo;</strong>
-        //       </span>
-        //     )}`
-        //   : t`Metabase documentation`,
-        keywords: query, // always match the query
-        icon: () => <Icon name="reference" />,
+        // TODO: Put query in a <strong> if possible
+        name: search
+          ? t`Search documentation for “${search}”`
+          : t`View documentation`,
+        keywords: search, // always match the query
+        icon: <Icon name="reference" />,
         perform: () => {
           const host = "https://www.metabase.com";
-          if (query) {
-            const params = new URLSearchParams({ query });
+          if (search) {
+            const params = new URLSearchParams({ query: search });
             // TODO: find the documentation search URL in the right way
             window.open(`${host}/search?${params}`);
           } else {
@@ -198,7 +185,7 @@ export const useCommandPalette = ({
         },
       },
     ];
-    // const filteredRootPageActions = filterItems(actions, query);
+    // const filteredRootPageActions = filterItems(actions, search);
     // temporary fix for kbar issue
     const filteredRootPageActions = actions;
 
@@ -230,7 +217,7 @@ export const useCommandPalette = ({
         return {
           id: `search-result-${result.id}`,
           name: result.name,
-          icon: () => (
+          icon: (
             <ItemIcon
               active={true}
               item={wrappedResult}
@@ -253,7 +240,7 @@ export const useCommandPalette = ({
     }
     return filteredRootPageActions;
   }, [
-    query,
+    search,
     dispatch,
     // setPage,
     openNewModal,
@@ -271,7 +258,7 @@ export const useCommandPalette = ({
         id: s.display_name,
         name: s.display_name,
         keywords: s.display_name,
-        icon: () => <Icon name="gear" />,
+        icon: <Icon name="gear" />,
         perform: () => {
           dispatch(
             push({

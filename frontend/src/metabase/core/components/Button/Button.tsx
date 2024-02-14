@@ -5,7 +5,7 @@ import _ from "underscore";
 import styled from "@emotion/styled";
 import type { IconName } from "metabase/ui";
 import { Icon } from "metabase/ui";
-import { useContextualPaletteAction } from "metabase/palette/hooks/useContextualPaletteAction";
+import { PaletteOptions, useContextualPaletteAction } from "metabase/palette/hooks/useContextualPaletteAction";
 import {
   ButtonContent,
   ButtonRoot,
@@ -66,7 +66,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
   /** To include the button in the command palette when it mounts,
    * set this to true, or to explicitly set the palette options, use an object */
-  palette?: boolean | { icon?: string; label?: string };
+  palette?: boolean | PaletteOptions;
 }
 
 const BaseButton = forwardRef(function BaseButton(

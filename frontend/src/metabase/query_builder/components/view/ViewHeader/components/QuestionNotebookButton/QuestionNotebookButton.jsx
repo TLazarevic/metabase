@@ -25,7 +25,6 @@ export function QuestionNotebookButton({
         onClick={() =>
           setQueryBuilderMode(isShowingNotebook ? "view" : "notebook")
         }
-        data-palette-name={label}
         {...props}
       />
     </Tooltip>

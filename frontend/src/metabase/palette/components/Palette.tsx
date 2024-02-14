@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDebounce } from "react-use";
 
 import {
@@ -7,14 +7,11 @@ import {
   KBarPositioner,
   KBarProvider,
   KBarResults,
-  KBarSearch,
   useMatches,
   useKBar,
   useRegisterActions,
 } from "kbar";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
-import { useSelector } from "metabase/lib/redux";
-import { getPaletteQuery } from "metabase/selectors/palette";
 import { Flex, Icon, Text } from "metabase/ui";
 import type { PaletteAction } from "../hooks/useCommandPalette";
 import { useCommandPalette } from "../hooks/useCommandPalette";
@@ -78,6 +75,17 @@ export const Palette = ({
 }: {
   children?: React.ReactNode;
 }) => {
+  // const [search, setSearch] = useState("");
+  const { query } = useKBar();
+
+  // useEffect(() => {
+  //   const input = query?.getInput();
+  //   console.log("input.value", input?.value);
+  // }, []);
+  // useEffect(() => {
+  //   console.log("input.value", input.value);
+  // }, [input]);
+
   return (
     <KBarProvider actions={[]}>
       <KBarPortal>
@@ -128,43 +136,33 @@ export const Palette = ({
 };
 
 export const PaletteResults = () => {
-
   // const [pages, setPages] = useState<PalettePageId[]>(["root"]);
 
-  const query = useSelector(getPaletteQuery);
+  const { search } = useKBar(state => ({ search: state.searchQuery }));
+  console.log("search", search);
 
-  // The search text is the string used to get search results
-  const [debouncedSearchText, setDebouncedSearchText] = useState(query);
-
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [debouncedSearchText, setDebouncedSearchText] = useState(search);
 
   useDebounce(
     () => {
-      setDebouncedSearchText(query.trim());
+      setDebouncedSearchText(search.trim());
     },
     SEARCH_DEBOUNCE_DURATION,
-    [query],
+    [search],
   );
 
   const { rootPageActions, adminSettingsActions } = useCommandPalette({
-    query,
+    // These are temporarily blanked out
+    search,
     debouncedSearchText,
     // setPages,
   });
 
-  // const page = pages[pages.length - 1];
   const allActions: PaletteAction[] = [
     ...rootPageActions,
     ...adminSettingsActions,
   ];
   useRegisterActions(allActions, allActions);
-
-  useEffect(() => {
-    if (!inputRef.current) {
-      return;
-    }
-    inputRef.current.setAttribute("autocomplete", "off");
-  }, [inputRef]);
 
   const { results } = useMatches();
   // const { query, search, actions, currentRootActionId, activeIndex, options } =
@@ -184,9 +182,17 @@ export const PaletteResults = () => {
       <KBarResults
         items={results}
         onRender={({ item, active }) => {
+          console.log("item", item);
           return (
             <PaletteResult active={active}>
-              {typeof item === "string" ? item : item.name}
+              {typeof item === "string" ? (
+                item
+              ) : (
+                <Flex gap=".5rem">
+                  {item.icon || <Icon name="click" />}
+                  {item.name}
+                </Flex>
+              )}
             </PaletteResult>
           );
         }}
