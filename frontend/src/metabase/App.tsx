@@ -32,6 +32,7 @@ import type { AppErrorDescriptor, State } from "metabase-types/store";
 import { AppContainer, AppContent, AppContentContainer } from "./App.styled";
 import ErrorBoundary from "./ErrorBoundary";
 import { NewModals } from "./new/components/NewModals";
+import { Palette } from "./palette/components/Palette";
 
 const getErrorComponent = ({ status, data, context }: AppErrorDescriptor) => {
   if (status === 403 || data?.error_code === "unauthorized") {
@@ -100,21 +101,25 @@ function App({
   return (
     <ErrorBoundary onError={onError}>
       <ScrollToTop>
-        <AppContainer className="spread">
-          <AppBanner location={location} />
-          {isAppBarVisible && <AppBar />}
-          <AppContentContainer isAdminApp={isAdminApp}>
-            {isNavBarEnabled && <Navbar />}
-            <AppContent ref={setViewportElement}>
-              <ContentViewportContext.Provider value={viewportElement ?? null}>
-                {errorPage ? getErrorComponent(errorPage) : children}
-              </ContentViewportContext.Provider>
-            </AppContent>
-            <UndoListing />
-            <StatusListing />
-            <NewModals />
-          </AppContentContainer>
-        </AppContainer>
+        <Palette>
+          <AppContainer className="spread">
+            <AppBanner location={location} />
+            {isAppBarVisible && <AppBar />}
+            <AppContentContainer isAdminApp={isAdminApp}>
+              {isNavBarEnabled && <Navbar />}
+              <AppContent ref={setViewportElement}>
+                <ContentViewportContext.Provider
+                  value={viewportElement ?? null}
+                >
+                  {errorPage ? getErrorComponent(errorPage) : children}
+                </ContentViewportContext.Provider>
+              </AppContent>
+              <UndoListing />
+              <StatusListing />
+              <NewModals />
+            </AppContentContainer>
+          </AppContainer>
+        </Palette>
       </ScrollToTop>
     </ErrorBoundary>
   );

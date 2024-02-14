@@ -1,13 +1,13 @@
-import { jt, t } from "ttag";
+import { t } from "ttag";
 import _ from "underscore";
-import type { Dispatch, SetStateAction } from "react";
+// import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useMemo, useEffect } from "react";
 import { push } from "react-router-redux";
-import type { JsonStructureItem } from "react-cmdk";
+import type { Action as PaletteAction } from "kbar";
 import { useDispatch, useSelector } from "metabase/lib/redux";
 import { setOpenModal, closeModal } from "metabase/redux/ui";
 import * as Urls from "metabase/lib/urls";
-import { Icon, Loader } from "metabase/ui";
+import { Icon } from "metabase/ui";
 import { getContextualPaletteActions } from "metabase/selectors/palette";
 import { getSections } from "metabase/admin/settings/selectors";
 import { reloadSettings } from "metabase/admin/settings/settings";
@@ -17,24 +17,26 @@ import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
 import Search from "metabase/entities/search";
 import { ItemIcon } from "metabase/search/components/SearchResult";
 import type { WrappedResult } from "metabase/search/types";
-import { setPaletteQuery } from "metabase/redux/palette";
+// import { setPaletteQuery } from "metabase/redux/palette";
 
-// migrating to cmdk
-export type CommandPaletteAction = Omit<JsonStructureItem, "onclick" | "id"> & {
-  id?: string;
-  onSelect?: (value?: string) => void;
-};
-export type CommandPaletteActions = {
-  id: string;
-  heading?: string;
-  items: CommandPaletteAction[];
-}[];
+// // migrating to cmdk
+// export type CommandPaletteAction = Omit<JsonStructureItem, "onclick" | "id"> & {
+//   id?: string;
+//   onSelect?: (value?: string) => void;
+// };
+// export type CommandPaletteActions = {
+//   id: string;
+//   heading?: string;
+//   items: CommandPaletteAction[];
+// }[];
+
+export type { PaletteAction };
 
 export type PalettePageId = "root" | "admin_settings";
 
 type AdminSetting = {
   key: string;
-  display_name: string;
+  name: string;
   description: string | null;
   type: "string";
   path: string;
@@ -43,21 +45,21 @@ type AdminSetting = {
 export const useCommandPalette = ({
   query,
   debouncedSearchText,
-  setPages,
-}: {
+}: // setPages,
+{
   query: string;
   debouncedSearchText: string;
-  setPages: Dispatch<SetStateAction<PalettePageId[]>>;
+  // setPages: Dispatch<SetStateAction<PalettePageId[]>>;
 }) => {
   const dispatch = useDispatch();
   const adminSections = useSelector<Record<string, AdminSetting>>(getSections);
 
-  const setPage = useCallback(
-    (page: PalettePageId) => {
-      setPages(pages => [...pages.slice(0, -1), page]);
-    },
-    [setPages],
-  );
+  // const setPage = useCallback(
+  //   (page: PalettePageId) => {
+  //     setPages(pages => [...pages.slice(0, -1), page]);
+  //   },
+  //   [setPages],
+  // );
 
   useEffect(() => {
     dispatch(reloadSettings());
@@ -72,9 +74,9 @@ export const useCommandPalette = ({
         return [
           ...memo,
           ...settings
-            .filter(s => s.display_name)
+            .filter(s => s.name)
             .map(s => ({
-              name: s.display_name || "",
+              name: s.name || "",
               description: s.description,
               path,
               key: s.key,
@@ -90,7 +92,7 @@ export const useCommandPalette = ({
   const filteredAdmin = useMemo(
     () =>
       adminSectionsSearchMap.filter(x =>
-        x.name.toLowerCase().includes(query.toLowerCase()),
+        x.name?.toLowerCase().includes(query?.toLowerCase() ?? ""),
       ),
     [query, adminSectionsSearchMap],
   );
@@ -115,117 +117,103 @@ export const useCommandPalette = ({
     reload: true,
   });
 
-  const rootPageActions = useMemo<CommandPaletteActions>(() => {
-    let actions: CommandPaletteActions = [];
+  const rootPageActions = useMemo<PaletteAction[]>(() => {
+    let actions: PaletteAction[] = [];
     if (contextualActions.length) {
-      actions = [
-        {
-          id: "contextual_actions",
-          heading: t`On this page`,
-          items: contextualActions.filter(({ children }) =>
-            query
-              ? children?.toString().toLowerCase().includes(query.toLowerCase())
-              : true,
-          ),
-        },
-      ];
+      actions = contextualActions.filter(({ name }) =>
+        query ? name.toLowerCase().includes(query.toLowerCase()) : true,
+      );
     }
 
     actions = [
       ...actions,
       {
-        id: "new",
-        heading: actions.length ? t`Other actions` : t`Actions`,
-        items: [
-          {
-            id: "new_collection",
-            children: t`New collection`,
-            icon: () => <Icon name="collection" />,
-            onSelect: () => {
-              openNewModal("collection");
-            },
-          },
-          {
-            id: "new_dashboard",
-            children: t`New dashboard`,
-            icon: () => <Icon name="dashboard" />,
-            onSelect: () => {
-              openNewModal("dashboard");
-            },
-          },
-          {
-            id: "new_question",
-            children: t`New question`,
-            icon: () => <Icon name="insight" />,
-            onSelect: () => {
-              dispatch(closeModal());
-              dispatch(
-                push(
-                  Urls.newQuestion({
-                    mode: "notebook",
-                    creationType: "custom_question",
-                  }),
-                ),
-              );
-            },
-          },
-          {
-            id: "admin_settings",
-            children: t`Admin settings`,
-            icon: () => <Icon name="gear" />,
-            closeOnSelect: false,
-            onSelect: () => {
-              dispatch(setPaletteQuery(""));
-              setPage("admin_settings");
-            },
-          },
-          {
-            id: "search_docs",
-            children: query
-              ? jt`${(
-                  <span>
-                    Search documentation for&nbsp;
-                    <strong>&ldquo;{query}&rdquo;</strong>
-                  </span>
-                )}`
-              : t`Metabase documentation`,
-            keywords: [query], // always match the query
-            icon: () => <Icon name="reference" />,
-            closeOnSelect: false,
-            onSelect: () => {
-              const host = "https://www.metabase.com";
-              if (query) {
-                const params = new URLSearchParams({ query });
-                // TODO: find the documentation search URL in the right way
-                window.open(`${host}/search?${params}`);
-              } else {
-                window.open(`${host}/docs/latest`);
-              }
-            },
-          },
-        ],
+        id: "new_collection",
+        name: t`New collection`,
+        icon: () => <Icon name="collection" />,
+        perform: () => {
+          openNewModal("collection");
+        },
+      },
+      {
+        id: "new_dashboard",
+        name: t`New dashboard`,
+        icon: () => <Icon name="dashboard" />,
+        perform: () => {
+          openNewModal("dashboard");
+        },
+      },
+      {
+        id: "new_question",
+        name: t`New question`,
+        icon: () => <Icon name="insight" />,
+        perform: () => {
+          dispatch(closeModal());
+          dispatch(
+            push(
+              Urls.newQuestion({
+                mode: "notebook",
+                creationType: "custom_question",
+              }),
+            ),
+          );
+        },
+      },
+      {
+        id: "admin_settings",
+        name: t`Admin settings!!`,
+        icon: () => <Icon name="gear" />,
+        // perform: () => {
+        //   dispatch(setPaletteQuery(""));
+        //   setPage("admin_settings");
+        // },
+      },
+      {
+        id: "search_docs",
+        name: "Search documentation for " + query,
+        // TODO: Bring this rich text back if possible
+        // name: query
+        //   ? jt`${(
+        //       <span>
+        //         Search documentation for&nbsp;
+        //         <strong>&ldquo;{query}&rdquo;</strong>
+        //       </span>
+        //     )}`
+        //   : t`Metabase documentation`,
+        keywords: query, // always match the query
+        icon: () => <Icon name="reference" />,
+        perform: () => {
+          const host = "https://www.metabase.com";
+          if (query) {
+            const params = new URLSearchParams({ query });
+            // TODO: find the documentation search URL in the right way
+            window.open(`${host}/search?${params}`);
+          } else {
+            window.open(`${host}/docs/latest`);
+          }
+        },
       },
     ];
     const filteredRootPageActions = filterItems(actions, query);
 
-    let searchItems: CommandPaletteAction[] = [];
+    let searchItems: PaletteAction[] = [];
     if (isSearchLoading) {
       searchItems.push({
         id: "search-is-loading",
-        children: <Loader size="sm" />,
-        disabled: true,
+        name: "Loading...",
+        // TODO: Bring this jsx back if possible
+        // children: <Loader size="sm" />,
+        // perform: undefined, TODO: Is this needed?
       });
     } else if (searchError) {
       searchItems.push({
         id: "search-error",
-        children: t`Could not load search results`,
-        disabled: true,
+        name: t`Could not load search results`,
       });
     } else if (debouncedSearchText && searchResults?.length === 0) {
       searchItems.push({
         id: "no-search-results",
-        children: t`No results`,
-        disabled: true,
+        name: t`No results`,
       });
     } else if (debouncedSearchText && searchResults?.length) {
       searchItems = searchResults.map(result => {
@@ -235,7 +223,7 @@ export const useCommandPalette = ({
         );
         return {
           id: `search-result-${result.id}`,
-          children: result.name,
+          name: result.name,
           icon: () => (
             <ItemIcon
               active={true}
@@ -243,7 +231,7 @@ export const useCommandPalette = ({
               type={wrappedResult.model}
             />
           ),
-          onSelect: () => {
+          perform: () => {
             dispatch(closeModal());
             dispatch(push(wrappedResult.getUrl()));
           },
@@ -253,15 +241,15 @@ export const useCommandPalette = ({
     if (searchItems.length) {
       filteredRootPageActions.push({
         id: "search_results",
-        heading: t`Search results`,
-        items: searchItems,
+        name: "Search results",
       });
+      filteredRootPageActions.push(...searchItems);
     }
     return filteredRootPageActions;
   }, [
     query,
     dispatch,
-    setPage,
+    // setPage,
     openNewModal,
     contextualActions,
     searchResults,
@@ -270,34 +258,30 @@ export const useCommandPalette = ({
     debouncedSearchText,
   ]);
 
-  const adminSettingsActions = [
+  const adminSettingsActions: PaletteAction[] = [
     {
-      id: "admin_settings",
-      heading: "Admin settings",
-      items: [
-        {
-          id: "back",
-          children: t`Back`,
-          icon: () => <Icon name="arrow_left" />,
-          closeOnSelect: false,
-          onSelect: () => {
-            setPage("root");
-          },
-        },
-        ...filteredAdmin.map(s => ({
-          id: s.display_name,
-          children: s.display_name,
-          icon: () => <Icon name="gear" />,
-          onSelect: () =>
-            dispatch(
-              push({
-                pathname: s.path,
-                hash: `#${s.key}`,
-              }),
-            ),
-        })),
-      ],
+      parent: "admin_settings",
+      id: "back",
+      name: t`Back`,
+      icon: () => <Icon name="arrow_left" />,
+      perform: () => {
+        // TODO: Make this go back to the root
+        //setPage("root");
+      },
     },
+    ...filteredAdmin.map(s => ({
+      parent: "admin_settings",
+      id: s.name,
+      name: s.name,
+      icon: () => <Icon name="gear" />,
+      perform: () =>
+        dispatch(
+          push({
+            pathname: s.path,
+            hash: `#${s.key}`,
+          }),
+        ),
+    })),
   ];
 
   return {
@@ -306,29 +290,23 @@ export const useCommandPalette = ({
   };
 };
 
+// TODO: Simplify since we don't need to support nested actions
 const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
   if (!child) {
     return false;
   }
   if (typeof child === "string") {
-    return child.toLowerCase().includes(query.toLowerCase());
+    return child.toLowerCase().includes(query?.toLowerCase() ?? "");
   }
   const children = Array.isArray(child) ? child : [child.toString()];
   return children.some(child => childMatchesQuery(child, query));
 };
 
 const filterItems = (
-  actions: CommandPaletteActions,
+  actions: PaletteAction[],
   query: string,
-): CommandPaletteActions => {
-  return actions.map(action => {
-    return {
-      ...action,
-      items: action.items.filter(item => {
-        if (item.children) {
-          return childMatchesQuery(item.children, query);
-        }
-      }),
-    };
+): PaletteAction[] => {
+  return actions.filter(item => {
+    return childMatchesQuery(item.name, query);
   });
 };
