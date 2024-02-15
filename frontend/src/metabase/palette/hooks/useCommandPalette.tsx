@@ -249,6 +249,7 @@ export const useCommandPalette = ({
         name: s.display_name,
         keywords: s.display_name,
         icon: <Icon name="gear" />,
+        section: "Settings",
         perform: () => {
           dispatch(
             push({
