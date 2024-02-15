@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { Button, Icon, TextInput } from "metabase/ui";
+import { KBarSearch } from "kbar";
 import Modal from "metabase/components/Modal";
-import {KBarSearch} from "kbar";
-import {color} from "metabase/lib/colors";
+import { color } from "metabase/lib/colors";
+import { Button, Flex, Icon } from "metabase/ui";
 
 export const PaletteModal = styled(Modal)`
   // Stolen from Github
@@ -15,11 +15,11 @@ export const PaletteModal = styled(Modal)`
   width: 448px;
   overflow: auto;
   box-shadow: 0 1px 0.25rem 0 rgba(0, 0, 0, 0.06);
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   min-height: 50vh;
   // max-height: max(50vh, 570px);
-  padding: 1rem;
-  padding-bottom: .25rem;
+  padding: 0;
+  padding-bottom: 0.25rem;
   display: flex;
 
   // Is this useful? I got it from the palette on notion
@@ -43,16 +43,16 @@ export const PaletteModal = styled(Modal)`
   }
 `;
 
-export const PaletteResult = styled.li<{ active?: boolean }>`
-  border-radius: 0.25rem;
-  background-color: ${props =>
-    props.active ? color('brand-light') : "transparent"};
-  list-style: none;
+export const PaletteResult = styled.div<{ active?: boolean }>`
   display: flex;
+  background-color: ${props =>
+    props.active ? color("brand-light") : "transparent"};
+  color: ${props => (props.active ? color("brand") : color("text-medium"))};
+  border-radius: 0.5rem;
   cursor: pointer;
   width: 100%;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
+  font-weight: bold;
+  line-height: 1rem;
 `;
 
 export const PaletteResultIcon = styled(Icon)`
@@ -68,8 +68,7 @@ export const PaletteResultList = styled.ul`
   display: flex;
   align-items: stretch;
   flex-flow: column nowrap;
-  margin-top: 1rem;
-  padding: 0;
+  padding: 0.75rem 1.5rem;
   // hacky fix
   & > div {
     height: 100%;
@@ -90,5 +89,18 @@ export const PaletteModalContainer = styled.div`
 // `;
 
 export const PaletteInput = styled(KBarSearch)`
-  padding: .5rem;
-`
+  padding: 0.5rem;
+  margin: 1.5rem;
+  margin-bottom: 0rem;
+`;
+
+export const PaletteResultsSectionHeader = styled.div`
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 0.5rem;
+`;
+
+export const PaletteFooterContainer = styled(Flex)`
+  border-top: 1px solid ${color("border")};
+`;

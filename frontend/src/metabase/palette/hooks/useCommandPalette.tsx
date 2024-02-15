@@ -1,22 +1,20 @@
-import { jt, t } from "ttag";
-import _ from "underscore";
+import { t } from "ttag";
 // import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useMemo, useEffect } from "react";
-import { push } from "react-router-redux";
 import type { Action as PaletteAction } from "kbar";
-import { useDispatch, useSelector } from "metabase/lib/redux";
-import { setOpenModal, closeModal } from "metabase/redux/ui";
-import * as Urls from "metabase/lib/urls";
-import { Icon } from "metabase/ui";
-import { getContextualPaletteActions } from "metabase/selectors/palette";
+import { useCallback, useEffect, useMemo } from "react";
+import { push } from "react-router-redux";
+import type { SearchResult } from "metabase-types/api";
 import { getSections } from "metabase/admin/settings/selectors";
 import { reloadSettings } from "metabase/admin/settings/settings";
 import { useSearchListQuery } from "metabase/common/hooks";
-import type { SearchResult } from "metabase-types/api";
-import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
 import Search from "metabase/entities/search";
-import { ItemIcon } from "metabase/search/components/SearchResult";
+import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
+import { useDispatch, useSelector } from "metabase/lib/redux";
+import * as Urls from "metabase/lib/urls";
+import { closeModal, setOpenModal } from "metabase/redux/ui";
 import type { WrappedResult } from "metabase/search/types";
+import { getContextualPaletteActions } from "metabase/selectors/palette";
+import { Icon } from "metabase/ui";
 // import { setPaletteQuery } from "metabase/redux/palette";
 
 // // migrating to cmdk
@@ -105,6 +103,9 @@ export const useCommandPalette = ({
   );
 
   const contextualActions = useSelector(getContextualPaletteActions);
+  // .map(
+  //   action => ({ ...action, section: "On this page" }),
+  // );
 
   const {
     data: searchResults,
@@ -214,16 +215,12 @@ export const useCommandPalette = ({
           result,
           dispatch,
         );
+        const icon = wrappedResult.getIcon();
         return {
           id: `search-result-${result.id}`,
           name: result.name,
-          icon: (
-            <ItemIcon
-              active={true}
-              item={wrappedResult}
-              type={wrappedResult.model}
-            />
-          ),
+          icon: <Icon {...icon} />,
+          section: "Search results",
           perform: () => {
             dispatch(closeModal());
             dispatch(push(wrappedResult.getUrl()));
@@ -231,18 +228,11 @@ export const useCommandPalette = ({
         };
       });
     }
-    if (searchItems.length) {
-      filteredRootPageActions.push({
-        id: "search_results",
-        name: "Search results",
-      });
-      filteredRootPageActions.push(...searchItems);
-    }
+    filteredRootPageActions.push(...searchItems);
     return filteredRootPageActions;
   }, [
     search,
     dispatch,
-    // setPage,
     openNewModal,
     contextualActions,
     searchResults,
@@ -277,23 +267,23 @@ export const useCommandPalette = ({
   };
 };
 
-// TODO: Simplify since we don't need to support nested actions
-const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
-  if (!child) {
-    return false;
-  }
-  if (typeof child === "string") {
-    return child.toLowerCase().includes(query?.toLowerCase() ?? "");
-  }
-  const children = Array.isArray(child) ? child : [child.toString()];
-  return children.some(child => childMatchesQuery(child, query));
-};
+// // TODO: Simplify since we don't need to support nested actions
+// const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
+//   if (!child) {
+//     return false;
+//   }
+//   if (typeof child === "string") {
+//     return child.toLowerCase().includes(query?.toLowerCase() ?? "");
+//   }
+//   const children = Array.isArray(child) ? child : [child.toString()];
+//   return children.some(child => childMatchesQuery(child, query));
+// };
 
-const filterItems = (
-  actions: PaletteAction[],
-  query: string,
-): PaletteAction[] => {
-  return actions.filter(item => {
-    return childMatchesQuery(item.name, query);
-  });
-};
+// const filterItems = (
+//   actions: PaletteAction[],
+//   query: string,
+// ): PaletteAction[] => {
+//   return actions.filter(item => {
+//     return childMatchesQuery(item.name, query);
+//   });
+// };
