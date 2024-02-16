@@ -1,4 +1,4 @@
-import type { ReactFragment, ReactNode, Ref } from "react";
+import type { ReactNode, Ref } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "metabase/lib/redux";
 import {
@@ -11,7 +11,7 @@ import { createPaletteAction } from "../utils";
 export type PaletteOptions = {
   icon?: ReactNode | IconName;
   label?: ReactNode;
-  onClick?: () => void;
+  perform?: () => void;
 };
 
 export const useContextualPaletteAction = (
@@ -26,18 +26,17 @@ export const useContextualPaletteAction = (
     if (!palette) {
       return;
     }
-    if (typeof palette == "object") {
-      label ??= palette.label;
-    }
+    const component =
+      label ?? (typeof palette === "object" ? palette.label : null);
 
-    const onClick = () => {
+    const perform = () => {
       // Function refs not currently supported for this purpose
       if (typeof ref === "function") {
         return;
       }
       ref?.current?.click();
     };
-    const paletteAction = createPaletteAction({ label, icon, onClick });
+    const paletteAction = createPaletteAction({ component, icon, perform });
 
     dispatch(registerPaletteAction(paletteAction));
     return () => {
