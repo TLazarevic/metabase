@@ -2,9 +2,6 @@ import type {
   AxisFormatter,
   ChartDataset,
   YAxisModel,
-  ChartMeasurements,
-  Padding,
-  TicksDimensions,
   CartesianChartModel,
 } from "metabase/visualizations/echarts/cartesian/model/types";
 import type {
@@ -14,6 +11,8 @@ import type {
 import { CHART_STYLE } from "metabase/visualizations/echarts/cartesian/constants/style";
 import { X_AXIS_DATA_KEY } from "metabase/visualizations/echarts/cartesian/constants/dataset";
 import { isNotNull } from "metabase/lib/types";
+
+import type { ChartMeasurements, Padding, TicksDimensions } from "./types";
 
 const getYAxisTicksWidth = (
   axisModel: YAxisModel,
