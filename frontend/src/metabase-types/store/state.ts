@@ -13,6 +13,7 @@ import type { SettingsState } from "./settings";
 import type { SetupState } from "./setup";
 import type { FileUploadState } from "./upload";
 import type { AuthState } from "./auth";
+import type { PaletteState } from "./palette";
 
 export interface State {
   admin: AdminState;
@@ -30,6 +31,7 @@ export interface State {
   setup: SetupState;
   upload: FileUploadState;
   modal: string;
+  palette: PaletteState;
 }
 
 export type Dispatch<T = any> = (action: T) => void;

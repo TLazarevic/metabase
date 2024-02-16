@@ -13,7 +13,6 @@ import {
 } from "metabase/query_builder/selectors";
 import { getEmbedOptions, getIsEmbedded } from "metabase/selectors/embed";
 import type { State } from "metabase-types/store";
-import type { CommandPaletteAction } from "metabase/palette/hooks/useCommandPalette";
 
 export interface RouterProps {
   location: Location;
@@ -202,13 +201,4 @@ export const getIsNavbarOpen: Selector<State, boolean> = createSelector(
 
     return isNavbarOpen;
   },
-);
-
-export const getContextualPaletteActions: Selector<
-  State,
-  CommandPaletteAction[]
-> = createSelector(
-  [(state: State) => state.app.contextualPaletteActions],
-  (contextualPaletteActions: CommandPaletteAction[]) =>
-    contextualPaletteActions,
 );

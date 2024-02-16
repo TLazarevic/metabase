@@ -1,32 +1,21 @@
 import { jt, t } from "ttag";
-import _ from "underscore";
-import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useMemo, useEffect } from "react";
+// import type { Dispatch, SetStateAction } from "react";
+import type { Action as KBarAction } from "kbar";
+import { useEffect, useMemo } from "react";
 import { push } from "react-router-redux";
-import type { JsonStructureItem } from "react-cmdk";
-import { useDispatch, useSelector } from "metabase/lib/redux";
-import { setOpenModal, closeModal } from "metabase/redux/ui";
-import * as Urls from "metabase/lib/urls";
-import { Icon, Loader } from "metabase/ui";
-import { getContextualPaletteActions } from "metabase/selectors/app";
+import type { SearchResult } from "metabase-types/api";
 import { getSections } from "metabase/admin/settings/selectors";
 import { reloadSettings } from "metabase/admin/settings/settings";
 import { useSearchListQuery } from "metabase/common/hooks";
-import type { SearchResult } from "metabase-types/api";
-import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
 import Search from "metabase/entities/search";
-import { ItemIcon } from "metabase/search/components/SearchResult";
-import type { WrappedResult } from "metabase/search/types";
+import { DEFAULT_SEARCH_LIMIT } from "metabase/lib/constants";
+import { useDispatch, useSelector } from "metabase/lib/redux";
+import { closeModal } from "metabase/redux/ui";
+import { getContextualPaletteActions } from "metabase/selectors/palette";
+import { Icon, Loader } from "metabase/ui";
+// import { setPaletteQuery } from "metabase/redux/palette";
 
-// migrating to cmdk
-export type CommandPaletteAction = Omit<JsonStructureItem, "onclick"> & {
-  onSelect?: (value?: string) => void;
-};
-export type CommandPaletteActions = {
-  id: string;
-  heading?: string;
-  items: CommandPaletteAction[];
-}[];
+export type PaletteAction = KBarAction & { component?: React.ReactNode };
 
 export type PalettePageId = "root" | "admin_settings";
 
@@ -34,302 +23,168 @@ type AdminSetting = {
   key: string;
   display_name: string;
   description: string | null;
-  type: "string";
+  type?: "string";
   path: string;
 };
 
-const childMatchesQuery = (child: React.ReactNode, query: string): boolean => {
-  if (!child) {
-    return false;
-  }
-  if (typeof child === "string") {
-    return child.toLowerCase().includes(query.toLowerCase());
-  }
-  const children = Array.isArray(child) ? child : [child.toString()];
-  return children.some(child => childMatchesQuery(child, query));
-};
-
-const filterItems = (
-  actions: CommandPaletteActions,
-  query: string,
-): CommandPaletteActions => {
-  return actions.map(action => {
-    return {
-      ...action,
-      items: action.items.filter(item => {
-        if (item.children) {
-          return childMatchesQuery(item.children, query);
-        }
-      }),
-    };
-  });
-};
-
 export const useCommandPalette = ({
-  query,
+  search,
   debouncedSearchText,
-  setPages,
-  setQuery,
 }: {
-  query: string;
+  search: string;
   debouncedSearchText: string;
-  setPages: Dispatch<SetStateAction<PalettePageId[]>>;
-  setQuery: Dispatch<SetStateAction<string>>;
 }) => {
   const dispatch = useDispatch();
-  const adminSections = useSelector<Record<string, AdminSetting>>(getSections);
-
-  const setPage = useCallback(
-    (page: PalettePageId) => {
-      setPages(pages => [...pages.slice(0, -1), page]);
-    },
-    [setPages],
-  );
+  const adminSections =
+    useSelector<Record<string, { name: string; settings: AdminSetting[] }>>(
+      getSections,
+    );
 
   useEffect(() => {
     dispatch(reloadSettings());
   }, [dispatch]);
 
-  const adminSectionsSearchMap = useMemo(
-    () =>
-      Object.keys(adminSections).reduce<AdminSetting[]>((memo, key) => {
-        const settings = adminSections[key].settings || [];
-        const path = `/admin/settings/${key}`;
+  const adminSectionsSearchMap = useMemo(() => {
+    return Object.keys(adminSections).reduce<AdminSetting[]>((memo, key) => {
+      const settings: AdminSetting[] = adminSections[key].settings || [];
+      const path = `/admin/settings/${key}`;
+      const acc: AdminSetting[] = [
+        ...memo,
+        ...settings
+          .filter(s => s.display_name)
+          .map(s => ({
+            name: s.display_name || "",
+            description: s.description,
+            path,
+            key: s.key,
+            display_name: `${key[0].toUpperCase()}${key.slice(1)} / ${
+              s.display_name
+            }`,
+          })),
+      ];
+      return acc;
+    }, []);
+  }, [adminSections]);
 
-        return [
-          ...memo,
-          ...settings
-            .filter(s => s.display_name)
-            .map(s => ({
-              name: s.display_name || "",
-              description: s.description,
-              path,
-              key: s.key,
-              displayName: `${key[0].toUpperCase()}${key.slice(1)} / ${
-                s.display_name
-              }`,
-            })),
-        ];
-      }, []),
-    [adminSections],
-  );
+  // TODO: Determine whether kbar handles this filtering automatically
+  const filteredAdmin = useMemo(() => {
+    return adminSectionsSearchMap.filter(x =>
+      x.display_name?.toLowerCase().includes(search?.toLowerCase() ?? ""),
+    );
+  }, [search, adminSectionsSearchMap]);
 
-  const filteredAdmin = useMemo(
-    () =>
-      adminSectionsSearchMap.filter(x =>
-        x.name.toLowerCase().includes(query.toLowerCase()),
-      ),
-    [query, adminSectionsSearchMap],
-  );
-
-  const openNewModal = useCallback(
-    (modalId: string) => {
-      dispatch(closeModal());
-      dispatch(setOpenModal(modalId));
-    },
-    [dispatch],
-  );
-
-  const contextualActions = useSelector(getContextualPaletteActions);
+  const contextualActions: PaletteAction[] = useSelector(
+    getContextualPaletteActions,
+  ).map(action => ({ ...action, section: "On this page" }));
 
   const {
     data: searchResults,
     error: searchError,
     isLoading: isSearchLoading,
   } = useSearchListQuery<SearchResult>({
-    enabled: !!debouncedSearchText,
+    enabled: debouncedSearchText.length > 0,
     query: { q: debouncedSearchText, limit: DEFAULT_SEARCH_LIMIT },
     reload: true,
   });
 
-  const rootPageActions = useMemo<CommandPaletteActions>(() => {
-    let actions: CommandPaletteActions = [];
-    if (contextualActions.length) {
-      actions = [
-        {
-          id: "contextual_actions",
-          heading: t`On this page`,
-          items: contextualActions.filter(({ children }) =>
-            query
-              ? children?.toString().toLowerCase().includes(query.toLowerCase())
-              : true,
-          ),
-        },
-      ];
-    }
-
-    actions = [
-      ...actions,
+  const basicActions = useMemo<PaletteAction[]>(() => {
+    const ret: PaletteAction[] = [
       {
-        id: "new",
-        heading: actions.length ? t`Other actions` : t`Actions`,
-        items: [
-          {
-            id: "new_collection",
-            children: t`New collection`,
-            icon: () => <Icon name="collection" />,
-            onSelect: () => {
-              openNewModal("collection");
-            },
-          },
-          {
-            id: "new_dashboard",
-            children: t`New dashboard`,
-            icon: () => <Icon name="dashboard" />,
-            onSelect: () => {
-              openNewModal("dashboard");
-            },
-          },
-          {
-            id: "new_question",
-            children: t`New question`,
-            icon: () => <Icon name="insight" />,
-            onSelect: () => {
-              dispatch(closeModal());
-              dispatch(
-                push(
-                  Urls.newQuestion({
-                    mode: "notebook",
-                    creationType: "custom_question",
-                  }),
-                ),
-              );
-            },
-          },
-          {
-            id: "admin_settings",
-            children: t`Admin settings`,
-            icon: () => <Icon name="gear" />,
-            closeOnSelect: false,
-            onSelect: () => {
-              setQuery("");
-              setPage("admin_settings");
-            },
-          },
-          {
-            id: "search_docs",
-            children: query
-              ? jt`${(
-                  <span>
-                    Search documentation for&nbsp;
-                    <strong>&ldquo;{query}&rdquo;</strong>
-                  </span>
-                )}`
-              : t`Metabase documentation`,
-            keywords: [query], // always match the query
-            icon: () => <Icon name="reference" />,
-            closeOnSelect: false,
-            onSelect: () => {
-              const host = "https://www.metabase.com";
-              if (query) {
-                const params = new URLSearchParams({ query });
-                // TODO: find the documentation search URL in the right way
-                window.open(`${host}/search?${params}`);
-              } else {
-                window.open(`${host}/docs/latest`);
-              }
-            },
-          },
-        ],
+        id: "search_docs",
+        name: `Search documentation for “${search}”`,
+        component: search
+          ? // TODO: Why use these classNames here?
+            jt`${(
+              <span className="truncate max-w-md dark:text-white">
+                Search documentation for&nbsp;
+                <strong>&ldquo;{search}&rdquo;</strong>
+              </span>
+            )}`
+          : t`View documentation`,
+        keywords: search, // Always match the search string
+        icon: () => <Icon name="document" />,
+        perform: () => {
+          const host = "https://www.metabase.com";
+          if (search) {
+            const params = new URLSearchParams({ query: search });
+            // TODO: find the documentation search URL in the right way
+            window.open(`${host}/search?${params}`);
+          } else {
+            window.open(`${host}/docs/latest`);
+          }
+        },
       },
     ];
-    const filteredRootPageActions = filterItems(actions, query);
+    return ret;
+  }, [search]);
 
-    let searchItems: CommandPaletteAction[] = [];
+  const searchResultActions = useMemo<PaletteAction[]>(() => {
+    const ret: PaletteAction[] = [];
     if (isSearchLoading) {
-      searchItems.push({
+      ret.push({
         id: "search-is-loading",
-        children: <Loader size="sm" />,
-        disabled: true,
+        name: "Loading...",
+        component: <Loader size="sm" />,
       });
     } else if (searchError) {
-      searchItems.push({
+      ret.push({
         id: "search-error",
-        children: t`Could not load search results`,
-        disabled: true,
+        name: t`Could not load search results`,
       });
-    } else if (debouncedSearchText && searchResults?.length === 0) {
-      searchItems.push({
-        id: "no-search-results",
-        children: t`No results`,
-        disabled: true,
-      });
-    } else if (debouncedSearchText && searchResults?.length) {
-      searchItems = searchResults.map(result => {
-        const wrappedResult: WrappedResult = Search.wrapEntity(
-          result,
-          dispatch,
+    } else if (debouncedSearchText) {
+      if (searchResults?.length) {
+        ret.push(
+          ...searchResults.map(result => {
+            const wrappedResult = Search.wrapEntity(result, dispatch);
+            return {
+              id: `search-result-${result.id}`,
+              name: result.name,
+              icon: <Icon {...wrappedResult.getIcon()} />,
+              section: "Search results",
+              perform: () => {
+                dispatch(closeModal());
+                dispatch(push(wrappedResult.getUrl()));
+              },
+            };
+          }),
         );
-        return {
-          id: `search-result-${result.id}`,
-          children: result.name,
-          icon: () => (
-            <ItemIcon
-              active={true}
-              item={wrappedResult}
-              type={wrappedResult.model}
-            />
-          ),
-          onSelect: () => {
-            dispatch(closeModal());
-            dispatch(push(wrappedResult.getUrl()));
-          },
-        };
-      });
+      } else {
+        ret.push({
+          id: "no-search-results",
+          name: t`No results`,
+        });
+      }
     }
-    if (searchItems.length) {
-      filteredRootPageActions.push({
-        id: "search_results",
-        heading: t`Search results`,
-        items: searchItems,
-      });
-    }
-    return filteredRootPageActions;
+    return ret;
   }, [
-    query,
     dispatch,
-    setPage,
-    openNewModal,
-    setQuery,
-    contextualActions,
-    searchResults,
-    searchError,
-    isSearchLoading,
     debouncedSearchText,
+    isSearchLoading,
+    searchError,
+    searchResults,
   ]);
 
-  const adminSettingsActions = [
-    {
-      id: "admin_settings",
-      heading: "Admin settings",
-      items: [
-        {
-          id: "back",
-          children: t`Back`,
-          icon: () => <Icon name="arrow_left" />,
-          closeOnSelect: false,
-          onSelect: () => {
-            setPage("root");
-          },
-        },
-        ...filteredAdmin.map(s => ({
-          id: s.display_name,
-          children: s.display_name,
-          icon: () => <Icon name="gear" />,
-          onSelect: () =>
-            dispatch(
-              push({
-                pathname: s.path,
-                hash: `#${s.key}`,
-              }),
-            ),
-        })),
-      ],
-    },
-  ];
+  const adminSettingsActions: PaletteAction[] = useMemo(() => {
+    return filteredAdmin.map(s => ({
+      parent: "admin_settings",
+      id: s.display_name,
+      name: s.display_name,
+      icon: <Icon name="gear" />,
+      perform: () => {
+        dispatch(
+          push({
+            pathname: s.path,
+            hash: `#${s.key}`,
+          }),
+        );
+      },
+    }));
+  }, [filteredAdmin, dispatch]);
 
-  return {
-    rootPageActions,
-    adminSettingsActions,
-  };
+  return [
+    ...basicActions,
+    ...searchResultActions,
+    ...contextualActions,
+    ...adminSettingsActions,
+  ];
 };

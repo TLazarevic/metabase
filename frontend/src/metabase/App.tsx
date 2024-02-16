@@ -113,11 +113,11 @@ function App({
             </AppContent>
             <UndoListing />
             <StatusListing />
-            <Palette />
             <NewModals />
           </AppContentContainer>
         </AppContainer>
       </ScrollToTop>
+      <Palette />
     </ErrorBoundary>
   );
 }

@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import CommandPalette from "react-cmdk";
-import { Button, Icon, TextInput } from "metabase/ui";
+import { KBarSearch } from "kbar";
 import Modal from "metabase/components/Modal";
+import { color } from "metabase/lib/colors";
+import { Button, Flex, Icon } from "metabase/ui";
 
 export const PaletteModal = styled(Modal)`
-  // Stolen from Github
   position: fixed;
   margin: 10vh auto;
   top: 0;
@@ -14,38 +14,44 @@ export const PaletteModal = styled(Modal)`
   width: 448px;
   overflow: auto;
   box-shadow: 0 1px 0.25rem 0 rgba(0, 0, 0, 0.06);
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   min-height: 50vh;
   // max-height: max(50vh, 570px);
-  padding: 1rem;
+  padding: 0;
+  padding-bottom: 0.25rem;
   display: flex;
-
-  // Is this useful? I got it from the palette on notion
   transform: translate3d(0px, 0px, 0px);
 
-  // fix later
-  & .ModalBody {
-    padding: 0;
+  // TODO: fix later
+  .ModalContent {
+    padding-bottom: 0;
   }
+  .ModalBody {
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+  }
+  #kbar-listbox {
+    height: auto;
+  }
+  // TODO: Needed?
   button {
     display: flex;
     flex-flow: row nowrap;
   }
 `;
 
-export const PaletteItemDisplay = styled.li`
-  list-style: none;
+export const PaletteResult = styled.div<{ active?: boolean }>`
   display: flex;
+  background-color: ${props =>
+    props.active ? color("brand-light") : "transparent"};
+  color: ${props => (props.active ? color("brand") : color("text-medium"))};
+  border-radius: 0.5rem;
+  cursor: pointer;
   width: 100%;
-  margin-bottom: 0.5rem;
-  // fix later
-  & button span {
-    display: flex;
-    align-items: center;
-  }
+  font-weight: bold;
+  line-height: 1rem;
 `;
-
-export const PaletteInput = styled(TextInput)``;
 
 export const PaletteResultIcon = styled(Icon)`
   margin-right: 0.5rem;
@@ -60,8 +66,12 @@ export const PaletteResultList = styled.ul`
   display: flex;
   align-items: stretch;
   flex-flow: column nowrap;
-  margin-top: 1rem;
-  padding: 0;
+  padding: 0.75rem 1.5rem;
+  // hacky fix
+  & > div {
+    height: 100%;
+    //max-height: unset;
+  }
 `;
 
 export const PaletteModalContainer = styled.div`
@@ -70,8 +80,26 @@ export const PaletteModalContainer = styled.div`
   flex: 1;
 `;
 
-export const StyledPalette = styled(CommandPalette)`
-  & input {
-    font-weight: bold !important;
-  }
+// export const StyledPalette = styled(CommandPalette)`
+//   & input {
+//     font-weight: bold !important;
+//   }
+// `;
+
+export const PaletteInput = styled(KBarSearch)`
+  padding: 0.5rem;
+  margin: 1.5rem;
+  margin-bottom: 0rem;
+  font-weight: bold;
+`;
+
+export const PaletteResultsSectionHeader = styled.div`
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 0.5rem;
+`;
+
+export const PaletteFooterContainer = styled(Flex)`
+  border-top: 1px solid ${color("border")};
 `;

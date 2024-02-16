@@ -1,23 +1,17 @@
-import type { ReactNode } from "react";
-import type { JsonStructureItem } from "react-cmdk";
 import { uuid } from "metabase/lib/utils";
 import { Icon } from "metabase/ui";
 import type { IconName } from "metabase/ui";
+import type { PaletteOptions } from "./hooks/useContextualPaletteAction";
 
 export const createPaletteAction = ({
-  children,
-  icon,
+  label,
+  icon = "click",
   onClick,
-}: Pick<JsonStructureItem, "children" | "onClick"> & {
-  icon?: ReactNode;
-}): JsonStructureItem => ({
+}: PaletteOptions) => ({
   id: uuid(),
-  children,
+  label,
+  // TODO: Remove this 'as'
   icon:
-    typeof icon === "string"
-      ? () => <Icon name={icon as IconName} />
-      : icon
-      ? () => <>{icon}</>
-      : () => <Icon name="click" />,
+    typeof icon === "string" ? <Icon name={icon as IconName} /> : <>{icon}</>,
   onClick,
 });
