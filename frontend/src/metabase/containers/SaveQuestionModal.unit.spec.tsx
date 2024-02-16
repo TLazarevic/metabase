@@ -664,16 +664,61 @@ describe("SaveQuestionModal", () => {
   });
 
   describe("new collection modal", () => {
-    const collDropdown = () => screen.getByTestId("select-button");
+    const collDropdown = () => screen.getByLabelText(/Which collection/);
     const newCollBtn = () =>
       screen.getByRole("button", {
         name: /new collection/i,
       });
     const collModalTitle = () =>
-      screen.getByRole("heading", { name: /new collection/i });
+      screen.getByRole("heading", { name: /Create New/i });
     const questionModalTitle = () =>
       screen.getByRole("heading", { name: /new question/i });
     const cancelBtn = () => screen.getByRole("button", { name: /cancel/i });
+
+    const COLLECTION = {
+      ROOT: createMockCollection({
+        ...ROOT_COLLECTION,
+        can_write: true,
+      }),
+      PARENT: createMockCollection({
+        id: 2,
+        name: "Parent collection",
+        can_write: true,
+      }),
+      CHILD: createMockCollection({
+        id: 3,
+        name: "Child collection",
+        can_write: true,
+      }),
+    };
+    COLLECTION.CHILD.location = `/${COLLECTION.PARENT.id}/`;
+
+    beforeEach(async () => {
+      window.Element.prototype.getBoundingClientRect = jest
+        .fn()
+        .mockReturnValue({ height: 100, width: 200 });
+
+      setupCollectionItemsEndpoint({
+        collection: COLLECTION.ROOT,
+        collectionItems: [
+          createMockCollectionItem({
+            ...COLLECTION.PARENT,
+            type: undefined,
+            model: "collection",
+          }),
+        ],
+      });
+      setupCollectionItemsEndpoint({
+        collection: COLLECTION.PARENT,
+        collectionItems: [
+          createMockCollectionItem({
+            ...COLLECTION.CHILD,
+            type: undefined,
+            model: "collection",
+          }),
+        ],
+      });
+    });
 
     it("should have a new collection button in the collection picker", async () => {
       await setup(getQuestion());
@@ -687,27 +732,10 @@ describe("SaveQuestionModal", () => {
       userEvent.click(newCollBtn());
       await waitFor(() => expect(collModalTitle()).toBeInTheDocument());
       userEvent.click(cancelBtn());
+      userEvent.click(cancelBtn());
       await waitFor(() => expect(questionModalTitle()).toBeInTheDocument());
     });
     describe("new collection location", () => {
-      const COLLECTION = {
-        ROOT: createMockCollection({
-          ...ROOT_COLLECTION,
-          can_write: true,
-        }),
-        PARENT: createMockCollection({
-          id: 1,
-          name: "Parent collection",
-          can_write: true,
-        }),
-        CHILD: createMockCollection({
-          id: 2,
-          name: "Child collection",
-          can_write: true,
-        }),
-      };
-      COLLECTION.CHILD.location = `/${COLLECTION.PARENT.id}/`;
-
       beforeEach(async () => {
         await setup(getQuestion(), null, {
           collectionEndpoints: {
@@ -717,21 +745,32 @@ describe("SaveQuestionModal", () => {
         });
         setupCollectionByIdEndpoint({ collections: [COLLECTION.PARENT] });
       });
-
       it("should create collection inside nested folder", async () => {
         userEvent.click(collDropdown());
         await waitFor(() => expect(newCollBtn()).toBeInTheDocument());
-        openCollection(COLLECTION.PARENT.name);
+        userEvent.click(
+          await screen.findByRole("button", {
+            name: new RegExp(COLLECTION.PARENT.name),
+          }),
+        );
         userEvent.click(newCollBtn());
         await waitFor(() => expect(collModalTitle()).toBeInTheDocument());
-        expect(collDropdown()).toHaveTextContent(COLLECTION.PARENT.name);
+        expect(await screen.findByText(/Name of new folder/)).toHaveTextContent(
+          COLLECTION.PARENT.name,
+        );
       });
       it("should create collection inside root folder", async () => {
         userEvent.click(collDropdown());
         await waitFor(() => expect(newCollBtn()).toBeInTheDocument());
         userEvent.click(newCollBtn());
-        await waitFor(() => expect(collModalTitle()).toBeInTheDocument());
-        expect(collDropdown()).toHaveTextContent(COLLECTION.ROOT.name);
+        await waitFor(async () =>
+          expect(
+            await screen.findByRole("heading", { name: "Create New" }),
+          ).toBeInTheDocument(),
+        );
+        expect(await screen.findByText(/Name of new folder/)).toHaveTextContent(
+          COLLECTION.ROOT.name,
+        );
       });
     });
   });

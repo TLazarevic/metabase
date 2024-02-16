@@ -45,6 +45,7 @@ export const NewCollectionDialog = ({
       opened={isOpen}
       onClose={onClose}
       data-testid="create-collection-on-the-go"
+      trapFocus={true}
     >
       {isLoading ? (
         <Loader />
@@ -60,6 +61,7 @@ export const NewCollectionDialog = ({
                 label={t`Name of new folder inside "${data?.name}"`}
                 placeholder={t`My new collection`}
                 mb="1rem"
+                data-autofocus
               />
               <FormFooter>
                 <FormErrorMessage inline />

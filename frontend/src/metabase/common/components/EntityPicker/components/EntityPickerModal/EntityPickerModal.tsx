@@ -40,6 +40,7 @@ export interface EntityPickerModalProps {
   options?: EntityPickerOptions;
   searchResultFilter?: (results: SearchResult[]) => SearchResult[];
   actions?: JSX.Element[];
+  trapFocus?: boolean;
 }
 
 export function EntityPickerModal({
@@ -52,6 +53,7 @@ export function EntityPickerModal({
   options = defaultOptions,
   actions = [],
   searchResultFilter,
+  trapFocus = true,
 }: EntityPickerModalProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(
@@ -68,6 +70,7 @@ export function EntityPickerModal({
       opened={open}
       onClose={onClose}
       data-testid="entity-picker-modal"
+      trapFocus={trapFocus}
     >
       <Modal.Overlay />
       <ModalContent h="100%">

@@ -33,7 +33,7 @@ export const CollectionPicker = ({
 }: CollectionPickerProps) => {
   const [path, setPath] = useState<PickerState<PickerItem>>(() =>
     getStateFromIdPath({
-      idPath: [null as unknown as CollectionId, "root"],
+      idPath: ["root"],
       namespace: options.namespace,
     }),
   );
@@ -69,7 +69,6 @@ export const CollectionPicker = ({
           ),
           namespace: options.namespace,
         });
-
         setPath(newPath);
       }
       // we need to trigger this effect on these properties because the object reference isn't stable
