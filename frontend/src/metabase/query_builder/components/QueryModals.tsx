@@ -117,28 +117,26 @@ class QueryModals extends Component<QueryModalsProps> {
     switch (modal) {
       case MODAL_TYPES.SAVE:
         return (
-          <Modal form onClose={onCloseModal}>
-            <SaveQuestionModal
-              question={this.props.question}
-              originalQuestion={this.props.originalQuestion}
-              initialCollectionId={this.props.initialCollectionId}
-              onSave={async (question: Question) => {
-                // if saving modified question, don't show "add to dashboard" modal
-                await this.props.onSave(question);
+          <SaveQuestionModal
+            question={this.props.question}
+            originalQuestion={this.props.originalQuestion}
+            initialCollectionId={this.props.initialCollectionId}
+            onSave={async (question: Question) => {
+              // if saving modified question, don't show "add to dashboard" modal
+              await this.props.onSave(question);
+              onCloseModal();
+            }}
+            onCreate={async question => {
+              await this.props.onCreate(question);
+              if (question.isDataset()) {
                 onCloseModal();
-              }}
-              onCreate={async question => {
-                await this.props.onCreate(question);
-                if (question.isDataset()) {
-                  onCloseModal();
-                  setQueryBuilderMode("view");
-                } else {
-                  onOpenModal(MODAL_TYPES.SAVED);
-                }
-              }}
-              onClose={onCloseModal}
-            />
-          </Modal>
+                setQueryBuilderMode("view");
+              } else {
+                onOpenModal(MODAL_TYPES.SAVED);
+              }
+            }}
+            onClose={onCloseModal}
+          />
         );
       case MODAL_TYPES.SAVED:
         return (
@@ -153,23 +151,21 @@ class QueryModals extends Component<QueryModalsProps> {
         );
       case MODAL_TYPES.ADD_TO_DASHBOARD_SAVE:
         return (
-          <Modal onClose={onCloseModal}>
-            <SaveQuestionModal
-              question={this.props.question}
-              originalQuestion={this.props.originalQuestion}
-              initialCollectionId={this.props.initialCollectionId}
-              onSave={async question => {
-                await this.props.onSave(question);
-                onOpenModal(MODAL_TYPES.ADD_TO_DASHBOARD);
-              }}
-              onCreate={async question => {
-                await this.props.onCreate(question);
-                onOpenModal(MODAL_TYPES.ADD_TO_DASHBOARD);
-              }}
-              onClose={onCloseModal}
-              multiStep
-            />
-          </Modal>
+          <SaveQuestionModal
+            question={this.props.question}
+            originalQuestion={this.props.originalQuestion}
+            initialCollectionId={this.props.initialCollectionId}
+            onSave={async question => {
+              await this.props.onSave(question);
+              onOpenModal(MODAL_TYPES.ADD_TO_DASHBOARD);
+            }}
+            onCreate={async question => {
+              await this.props.onCreate(question);
+              onOpenModal(MODAL_TYPES.ADD_TO_DASHBOARD);
+            }}
+            onClose={onCloseModal}
+            multiStep
+          />
         );
       case MODAL_TYPES.ADD_TO_DASHBOARD:
         return (
@@ -192,43 +188,39 @@ class QueryModals extends Component<QueryModalsProps> {
         );
       case MODAL_TYPES.SAVE_QUESTION_BEFORE_ALERT:
         return (
-          <Modal onClose={onCloseModal}>
-            <SaveQuestionModal
-              question={this.props.question}
-              originalQuestion={this.props.originalQuestion}
-              onSave={async question => {
-                await this.props.onSave(question);
-                this.showAlertsAfterQuestionSaved();
-              }}
-              onCreate={async question => {
-                await this.props.onCreate(question);
-                this.showAlertsAfterQuestionSaved();
-              }}
-              onClose={onCloseModal}
-              multiStep
-              initialCollectionId={this.props.initialCollectionId}
-            />
-          </Modal>
+          <SaveQuestionModal
+            question={this.props.question}
+            originalQuestion={this.props.originalQuestion}
+            onSave={async question => {
+              await this.props.onSave(question);
+              this.showAlertsAfterQuestionSaved();
+            }}
+            onCreate={async question => {
+              await this.props.onCreate(question);
+              this.showAlertsAfterQuestionSaved();
+            }}
+            onClose={onCloseModal}
+            multiStep
+            initialCollectionId={this.props.initialCollectionId}
+          />
         );
       case MODAL_TYPES.SAVE_QUESTION_BEFORE_EMBED:
         return (
-          <Modal onClose={onCloseModal}>
-            <SaveQuestionModal
-              question={this.props.question}
-              originalQuestion={this.props.originalQuestion}
-              onSave={async question => {
-                await this.props.onSave(question);
-                onOpenModal(MODAL_TYPES.EMBED);
-              }}
-              onCreate={async question => {
-                await this.props.onCreate(question);
-                onOpenModal(MODAL_TYPES.EMBED);
-              }}
-              onClose={onCloseModal}
-              multiStep
-              initialCollectionId={this.props.initialCollectionId}
-            />
-          </Modal>
+          <SaveQuestionModal
+            question={this.props.question}
+            originalQuestion={this.props.originalQuestion}
+            onSave={async question => {
+              await this.props.onSave(question);
+              onOpenModal(MODAL_TYPES.EMBED);
+            }}
+            onCreate={async question => {
+              await this.props.onCreate(question);
+              onOpenModal(MODAL_TYPES.EMBED);
+            }}
+            onClose={onCloseModal}
+            multiStep
+            initialCollectionId={this.props.initialCollectionId}
+          />
         );
       case MODAL_TYPES.FILTERS:
         return (
