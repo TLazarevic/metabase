@@ -1,5 +1,8 @@
 import type { EChartsOption } from "echarts";
-import type { CartesianChartModel } from "metabase/visualizations/echarts/cartesian/model/types";
+import type {
+  CartesianChartModel,
+  ChartMeasurements,
+} from "metabase/visualizations/echarts/cartesian/model/types";
 import { buildEChartsSeries } from "metabase/visualizations/echarts/cartesian/option/series";
 import type {
   ComputedVisualizationSettings,
@@ -20,6 +23,7 @@ import { getTrendLineOptionsAndDatasets } from "./trend-line";
 
 export const getCartesianChartOption = (
   chartModel: CartesianChartModel,
+  chartMeasurements: ChartMeasurements,
   timelineEventsModel: TimelineEventsModel | null,
   selectedTimelineEventsIds: TimelineEventId[],
   settings: ComputedVisualizationSettings,
@@ -83,11 +87,17 @@ export const getCartesianChartOption = (
       throttleDelay: 200,
     },
     grid: {
-      ...chartModel.chartMeasurements.padding,
+      ...chartMeasurements.padding,
       containLabel: true,
     },
     dataset: echartsDataset,
     series: seriesOption,
-    ...buildAxes(chartModel, settings, hasTimelineEvents, renderingContext),
+    ...buildAxes(
+      chartModel,
+      chartMeasurements,
+      settings,
+      hasTimelineEvents,
+      renderingContext,
+    ),
   } as EChartsOption;
 };

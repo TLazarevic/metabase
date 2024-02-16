@@ -117,7 +117,5 @@ export type CartesianChartModel = {
 
   insights: Insight[];
 
-  chartMeasurements: ChartMeasurements;
-
   bubbleSizeDomain: Extent | null;
 };

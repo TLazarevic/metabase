@@ -5,7 +5,7 @@ import type {
   ChartMeasurements,
   Padding,
   TicksDimensions,
-  XAxisModel,
+  CartesianChartModel,
 } from "metabase/visualizations/echarts/cartesian/model/types";
 import type {
   ComputedVisualizationSettings,
@@ -100,10 +100,7 @@ const getXAxisTicksHeight = (
 };
 
 export const getTicksDimensions = (
-  dataset: ChartDataset,
-  leftAxisModel: YAxisModel | null,
-  rightAxisModel: YAxisModel | null,
-  xAxisModel: XAxisModel,
+  chartModel: CartesianChartModel,
   settings: ComputedVisualizationSettings,
   hasTimelineEvents: boolean,
   renderingContext: RenderingContext,
@@ -114,25 +111,28 @@ export const getTicksDimensions = (
     xTicksHeight: 0,
   };
 
-  if (leftAxisModel) {
+  if (chartModel.leftAxisModel) {
     ticksDimensions.yTicksWidthLeft =
-      getYAxisTicksWidth(leftAxisModel, settings, renderingContext) +
+      getYAxisTicksWidth(chartModel.leftAxisModel, settings, renderingContext) +
       CHART_STYLE.axisTicksMarginY;
   }
 
-  if (rightAxisModel) {
+  if (chartModel.rightAxisModel) {
     ticksDimensions.yTicksWidthRight =
-      getYAxisTicksWidth(rightAxisModel, settings, renderingContext) +
-      CHART_STYLE.axisTicksMarginY;
+      getYAxisTicksWidth(
+        chartModel.rightAxisModel,
+        settings,
+        renderingContext,
+      ) + CHART_STYLE.axisTicksMarginY;
   }
 
   const hasBottomAxis = !!settings["graph.x_axis.axis_enabled"];
   if (hasBottomAxis) {
     ticksDimensions.xTicksHeight =
       getXAxisTicksHeight(
-        dataset,
+        chartModel.dataset,
         settings,
-        xAxisModel.formatter,
+        chartModel.xAxisModel.formatter,
         renderingContext,
       ) +
       CHART_STYLE.axisTicksMarginX +
@@ -143,8 +143,7 @@ export const getTicksDimensions = (
 };
 
 export const getChartPadding = (
-  leftAxisModel: YAxisModel | null,
-  rightAxisModel: YAxisModel | null,
+  chartModel: CartesianChartModel,
   settings: ComputedVisualizationSettings,
 ): Padding => {
   const padding: Padding = {
@@ -163,10 +162,10 @@ export const getChartPadding = (
   const yAxisNameTotalWidth =
     CHART_STYLE.axisName.size / 2 + CHART_STYLE.axisNameMargin;
 
-  if (leftAxisModel?.label) {
+  if (chartModel.leftAxisModel?.label) {
     padding.left += yAxisNameTotalWidth;
   }
-  if (rightAxisModel?.label) {
+  if (chartModel.rightAxisModel?.label) {
     padding.right += yAxisNameTotalWidth;
   }
 
@@ -180,25 +179,19 @@ export const getChartPadding = (
 };
 
 export const getChartMeasurements = (
-  dataset: ChartDataset,
-  leftAxisModel: YAxisModel | null,
-  rightAxisModel: YAxisModel | null,
-  xAxisModel: XAxisModel,
+  chartModel: CartesianChartModel,
   settings: ComputedVisualizationSettings,
   chartWidth: number,
   hasTimelineEvents: boolean,
   renderingContext: RenderingContext,
 ): ChartMeasurements => {
   const ticksDimensions = getTicksDimensions(
-    dataset,
-    leftAxisModel,
-    rightAxisModel,
-    xAxisModel,
+    chartModel,
     settings,
     hasTimelineEvents,
     renderingContext,
   );
-  const padding = getChartPadding(leftAxisModel, rightAxisModel, settings);
+  const padding = getChartPadding(chartModel, settings);
 
   const boundaryWidth =
     chartWidth -

@@ -11,10 +11,12 @@ import { getCartesianChartOption } from "../../option";
 import type { WaterfallChartModel } from "../types";
 import { DATASET_DIMENSIONS } from "../constants";
 import type { TimelineEventsModel } from "../../timeline-events/types";
+import type { ChartMeasurements } from "../../model/types";
 import { getAxes } from "./axis";
 
 export function getWaterfallOption(
   chartModel: WaterfallChartModel,
+  chartMeasurements: ChartMeasurements,
   timelineEventsModel: TimelineEventsModel | null,
   selectedTimelineEventsIds: TimelineEventId[],
   settings: ComputedVisualizationSettings,
@@ -23,6 +25,7 @@ export function getWaterfallOption(
 ): EChartsOption {
   const baseOption = getCartesianChartOption(
     chartModel,
+    chartMeasurements,
     timelineEventsModel,
     selectedTimelineEventsIds,
     settings,
@@ -38,6 +41,12 @@ export function getWaterfallOption(
   return {
     ...baseOption,
     dataset,
-    ...getAxes(settings, chartModel, baseOption, renderingContext),
+    ...getAxes(
+      settings,
+      chartModel,
+      chartMeasurements,
+      baseOption,
+      renderingContext,
+    ),
   };
 }

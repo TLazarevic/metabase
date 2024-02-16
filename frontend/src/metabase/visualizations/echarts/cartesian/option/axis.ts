@@ -7,6 +7,7 @@ import type {
 import type {
   AxisFormatter,
   CartesianChartModel,
+  ChartMeasurements,
   Extent,
   YAxisModel,
 } from "metabase/visualizations/echarts/cartesian/model/types";
@@ -113,6 +114,7 @@ const getRotateAngle = (settings: ComputedVisualizationSettings) => {
 
 export const buildDimensionAxis = (
   chartModel: CartesianChartModel,
+  chartMeasurements: ChartMeasurements,
   settings: ComputedVisualizationSettings,
   formatter: AxisFormatter,
   hasTimelineEvents: boolean,
@@ -127,7 +129,7 @@ export const buildDimensionAxis = (
       : ([0.02, 0.02] as [number, number]);
 
   const nameGap = getAxisNameGap(
-    chartModel.chartMeasurements.ticksDimensions.xTicksHeight,
+    chartMeasurements.ticksDimensions.xTicksHeight,
   );
   const valueGetter = getDimensionDisplayValueGetter(chartModel, settings);
 
@@ -216,6 +218,7 @@ export const buildMetricAxis = (
 
 const buildMetricsAxes = (
   chartModel: CartesianChartModel,
+  chartMeasurements: ChartMeasurements,
   settings: ComputedVisualizationSettings,
   renderingContext: RenderingContext,
 ): CartesianAxisOption[] => {
@@ -225,7 +228,7 @@ const buildMetricsAxes = (
     axes.push(
       buildMetricAxis(
         chartModel.leftAxisModel,
-        chartModel.chartMeasurements.ticksDimensions.yTicksWidthLeft,
+        chartMeasurements.ticksDimensions.yTicksWidthLeft,
         settings,
         "left",
         true,
@@ -239,7 +242,7 @@ const buildMetricsAxes = (
     axes.push(
       buildMetricAxis(
         chartModel.rightAxisModel,
-        chartModel.chartMeasurements.ticksDimensions.yTicksWidthRight,
+        chartMeasurements.ticksDimensions.yTicksWidthRight,
         settings,
         "right",
         isOnlyAxis,
@@ -253,6 +256,7 @@ const buildMetricsAxes = (
 
 export const buildAxes = (
   chartModel: CartesianChartModel,
+  chartMeasurements: ChartMeasurements,
   settings: ComputedVisualizationSettings,
   hasTimelineEvents: boolean,
   renderingContext: RenderingContext,
@@ -260,11 +264,17 @@ export const buildAxes = (
   return {
     xAxis: buildDimensionAxis(
       chartModel,
+      chartMeasurements,
       settings,
       chartModel.xAxisModel.formatter,
       hasTimelineEvents,
       renderingContext,
     ),
-    yAxis: buildMetricsAxes(chartModel, settings, renderingContext),
+    yAxis: buildMetricsAxes(
+      chartModel,
+      chartMeasurements,
+      settings,
+      renderingContext,
+    ),
   };
 };

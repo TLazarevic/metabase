@@ -161,6 +161,7 @@ const getTimelineEventsInsideRange = (
 
 export const getTimelineEventsModel = (
   chartModel: CartesianChartModel,
+  chartMeasurements: ChartMeasurements,
   timelineEvents: TimelineEvent[],
   renderingContext: RenderingContext,
 ) => {
@@ -188,7 +189,7 @@ export const getTimelineEventsModel = (
     chartModel.dimensionModel.column.unit ?? "day", // TODO: compute binning unit for native questions
   );
 
-  const dayWidth = getDayWidth(dimensionRange, chartModel.chartMeasurements);
+  const dayWidth = getDayWidth(dimensionRange, chartMeasurements);
   return mergeOverlappingTimelineEventGroups(
     timelineEventsByUnitStart,
     dayWidth,

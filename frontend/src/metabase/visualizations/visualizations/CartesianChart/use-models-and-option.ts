@@ -13,6 +13,7 @@ import { getCartesianChartOption } from "metabase/visualizations/echarts/cartesi
 import { getWaterfallChartModel } from "metabase/visualizations/echarts/cartesian/waterfall/model";
 import { getWaterfallOption } from "metabase/visualizations/echarts/cartesian/waterfall/option";
 import { checkWaterfallChartModel } from "metabase/visualizations/echarts/cartesian/waterfall/utils";
+import { getChartMeasurements } from "metabase/visualizations/echarts/cartesian/chart-measurements";
 
 export function useModelsAndOption({
   rawSeries,
@@ -40,46 +41,48 @@ export function useModelsAndOption({
     [fontFamily],
   );
 
-  const chartModel = useMemo(() => {
-    const hasTimelineEvents = timelineEvents
-      ? timelineEvents.length !== 0
-      : false;
+  const hasTimelineEvents = timelineEvents
+    ? timelineEvents.length !== 0
+    : false;
 
+  const chartModel = useMemo(() => {
     switch (card.display) {
       case "waterfall":
         return getWaterfallChartModel(
           seriesToRender,
           settings,
-          width,
-          hasTimelineEvents,
           renderingContext,
         );
       default:
         return getCartesianChartModel(
           seriesToRender,
           settings,
-          width,
-          hasTimelineEvents,
           renderingContext,
         );
     }
-  }, [
-    card.display,
-    seriesToRender,
-    settings,
-    renderingContext,
-    timelineEvents,
-    width,
-  ]);
+  }, [card.display, seriesToRender, settings, renderingContext]);
+
+  const chartMeasurements = useMemo(
+    () =>
+      getChartMeasurements(
+        chartModel,
+        settings,
+        width,
+        hasTimelineEvents,
+        renderingContext,
+      ),
+    [chartModel, settings, width, hasTimelineEvents, renderingContext],
+  );
 
   const timelineEventsModel = useMemo(
     () =>
       getTimelineEventsModel(
         chartModel,
+        chartMeasurements,
         timelineEvents ?? [],
         renderingContext,
       ),
-    [chartModel, timelineEvents, renderingContext],
+    [chartModel, chartMeasurements, timelineEvents, renderingContext],
   );
 
   const option = useMemo(() => {
@@ -87,6 +90,7 @@ export function useModelsAndOption({
       case "waterfall":
         return getWaterfallOption(
           checkWaterfallChartModel(chartModel),
+          chartMeasurements,
           timelineEventsModel,
           selectedTimelineEventIds ?? [],
           settings,
@@ -96,6 +100,7 @@ export function useModelsAndOption({
       default:
         return getCartesianChartOption(
           chartModel,
+          chartMeasurements,
           timelineEventsModel,
           selectedTimelineEventIds ?? [],
           settings,
@@ -106,6 +111,7 @@ export function useModelsAndOption({
   }, [
     card.display,
     chartModel,
+    chartMeasurements,
     renderingContext,
     selectedTimelineEventIds,
     settings,

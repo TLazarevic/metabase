@@ -130,15 +130,11 @@ function getWaterfallTotal(
 export function getWaterfallChartModel(
   rawSeries: RawSeries,
   settings: ComputedVisualizationSettings,
-  chartWidth: number,
-  hasTimelineEvents: boolean,
   renderingContext: RenderingContext,
 ) {
   const baseChartModel = getCartesianChartModel(
     rawSeries,
     settings,
-    chartWidth,
-    hasTimelineEvents,
     renderingContext,
   );
 
