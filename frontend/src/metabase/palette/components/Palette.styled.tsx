@@ -5,7 +5,6 @@ import { color } from "metabase/lib/colors";
 import { Button, Flex, Icon } from "metabase/ui";
 
 export const PaletteModal = styled(Modal)`
-  // Stolen from Github
   position: fixed;
   margin: 10vh auto;
   top: 0;
@@ -21,11 +20,9 @@ export const PaletteModal = styled(Modal)`
   padding: 0;
   padding-bottom: 0.25rem;
   display: flex;
-
-  // Is this useful? I got it from the palette on notion
   transform: translate3d(0px, 0px, 0px);
 
-  // fix later
+  // TODO: fix later
   .ModalContent {
     padding-bottom: 0;
   }
@@ -37,6 +34,7 @@ export const PaletteModal = styled(Modal)`
   #kbar-listbox {
     height: auto;
   }
+  // TODO: Needed?
   button {
     display: flex;
     flex-flow: row nowrap;
@@ -82,16 +80,11 @@ export const PaletteModalContainer = styled.div`
   flex: 1;
 `;
 
-// export const StyledPalette = styled(CommandPalette)`
-//   & input {
-//     font-weight: bold !important;
-//   }
-// `;
-
 export const PaletteInput = styled(KBarSearch)`
   padding: 0.5rem;
   margin: 1.5rem;
   margin-bottom: 0rem;
+  font-weight: bold;
 `;
 
 export const PaletteResultsSectionHeader = styled.div`

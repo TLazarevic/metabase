@@ -1,17 +1,21 @@
 import { uuid } from "metabase/lib/utils";
 import { Icon } from "metabase/ui";
 import type { IconName } from "metabase/ui";
-import type { PaletteOptions } from "./hooks/useContextualPaletteAction";
+import type { PaletteAction } from "./hooks/useCommandPalette";
 
 export const createPaletteAction = ({
-  label,
+  component,
   icon = "click",
-  onClick,
-}: PaletteOptions) => ({
+  perform,
+}: {
+  component: React.ReactNode;
+  icon: React.ReactNode | IconName;
+  perform: () => void;
+}): PaletteAction => ({
   id: uuid(),
-  label,
-  // TODO: Remove this 'as'
+  name: component?.toString() || "",
+  component,
   icon:
     typeof icon === "string" ? <Icon name={icon as IconName} /> : <>{icon}</>,
-  onClick,
+  perform,
 });
