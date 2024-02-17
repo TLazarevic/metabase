@@ -47,7 +47,7 @@ export const PaletteResult = styled.div<{ active?: boolean }>`
     props.active ? color("brand-light") : "transparent"};
   color: ${props => (props.active ? color("brand") : color("text-medium"))};
   border-radius: 0.5rem;
-  cursor: pointer;
+  cursor: ${props => (props.active ? "pointer" : "default")};
   width: 100%;
   font-weight: bold;
   line-height: 1rem;

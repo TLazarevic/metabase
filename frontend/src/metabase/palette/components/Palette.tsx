@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useDebounce } from "react-use";
 import { push } from "react-router-redux";
 
+import type { ActionImpl } from "kbar";
 import {
   KBarPortal,
   KBarProvider,
@@ -11,7 +12,7 @@ import {
   useRegisterActions,
 } from "kbar";
 
-import { t } from "ttag/types";
+import { t } from "ttag";
 import { SEARCH_DEBOUNCE_DURATION } from "metabase/lib/constants";
 import { Flex, Icon, Text } from "metabase/ui";
 import { color } from "metabase/lib/colors";
@@ -150,29 +151,31 @@ export const Palette = () => {
 };
 
 export const PaletteResults = () => {
-  const { search } = useKBar(state => ({ search: state.searchQuery }));
-  const trimmedSearch = search.trim();
+  // Used for finding actions within the list
+  const { search: query } = useKBar(state => ({ search: state.searchQuery }));
+  const trimmedQuery = query.trim();
 
-  const [debouncedSearchText, setDebouncedSearchText] = useState(search);
+  // Used for finding objects across the Metabase instance
+  const [debouncedSearchText, setDebouncedSearchText] = useState(trimmedQuery);
 
   useDebounce(
     () => {
-      setDebouncedSearchText(trimmedSearch);
+      setDebouncedSearchText(trimmedQuery);
     },
     SEARCH_DEBOUNCE_DURATION,
-    [search],
+    [trimmedQuery],
   );
 
   const actions = useCommandPalette({
-    search: trimmedSearch,
+    query: trimmedQuery,
     debouncedSearchText,
   });
   useRegisterActions(actions, actions);
-  const actionIdToComponent = new Map<string, PaletteAction["component"]>();
+
+  const paletteActions = new Map<string, PaletteAction>();
   actions.forEach(action => {
-    if (action.component) {
-      actionIdToComponent.set(action.id, action.component);
-    }
+    action.isButton ??= true;
+    paletteActions.set(action.id, action);
   });
 
   const { results } = useMatches();
@@ -181,9 +184,17 @@ export const PaletteResults = () => {
     <PaletteResultList>
       <KBarResults
         items={results}
-        onRender={({ item, active }) => {
+        onRender={({
+          item,
+          active,
+        }: {
+          item: string | ActionImpl;
+          active: boolean;
+        }) => {
+          const paletteAction =
+            typeof item === "object" ? paletteActions.get(item.id) : null;
           return (
-            <PaletteResult active={active}>
+            <PaletteResult active={active && paletteAction?.isButton}>
               {typeof item === "string" ? (
                 <PaletteResultsSectionHeader>
                   {item}
@@ -197,7 +208,7 @@ export const PaletteResults = () => {
                 >
                   <Flex gap=".5rem">
                     {item.icon || <Icon name="click" />}
-                    {actionIdToComponent.get(item.id) ?? item.name}
+                    {paletteAction?.component ?? item.name}
                   </Flex>
                   <EnterIcon active={active} fill={color("brand")} />
                 </Flex>

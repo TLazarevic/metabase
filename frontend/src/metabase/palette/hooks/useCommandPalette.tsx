@@ -15,7 +15,10 @@ import { getContextualPaletteActions } from "metabase/selectors/palette";
 import { Icon, Loader } from "metabase/ui";
 // import { setPaletteQuery } from "metabase/redux/palette";
 
-export type PaletteAction = KBarAction & { component?: React.ReactNode };
+export type PaletteAction = KBarAction & {
+  component?: React.ReactNode;
+  isButton?: boolean;
+};
 
 export type PalettePageId = "root" | "admin_settings";
 
@@ -28,10 +31,10 @@ type AdminSetting = {
 };
 
 export const useCommandPalette = ({
-  search,
+  query,
   debouncedSearchText,
 }: {
-  search: string;
+  query: string;
   debouncedSearchText: string;
 }) => {
   const dispatch = useDispatch();
@@ -44,7 +47,7 @@ export const useCommandPalette = ({
     dispatch(reloadSettings());
   }, [dispatch]);
 
-  const adminSectionsSearchMap = useMemo(() => {
+  const adminSettings = useMemo(() => {
     return Object.keys(adminSections).reduce<AdminSetting[]>((memo, key) => {
       const settings: AdminSetting[] = adminSections[key].settings || [];
       const path = `/admin/settings/${key}`;
@@ -66,12 +69,22 @@ export const useCommandPalette = ({
     }, []);
   }, [adminSections]);
 
-  // TODO: Determine whether kbar handles this filtering automatically
-  const filteredAdmin = useMemo(() => {
-    return adminSectionsSearchMap.filter(x =>
-      x.display_name?.toLowerCase().includes(search?.toLowerCase() ?? ""),
-    );
-  }, [search, adminSectionsSearchMap]);
+  const adminSettingsActions: PaletteAction[] = useMemo(() => {
+    return adminSettings.map(s => ({
+      parent: "admin_settings",
+      id: s.display_name,
+      name: s.display_name,
+      icon: <Icon name="gear" />,
+      perform: () => {
+        dispatch(
+          push({
+            pathname: s.path,
+            hash: `#${s.key}`,
+          }),
+        );
+      },
+    }));
+  }, [adminSettings, dispatch]);
 
   const contextualActions: PaletteAction[] = useSelector(
     getContextualPaletteActions,
@@ -91,22 +104,22 @@ export const useCommandPalette = ({
     const ret: PaletteAction[] = [
       {
         id: "search_docs",
-        name: `Search documentation for “${search}”`,
-        component: search
+        name: `Search documentation for “${query}”`,
+        component: query
           ? // TODO: Why use these classNames here?
             jt`${(
               <span className="truncate max-w-md dark:text-white">
                 Search documentation for&nbsp;
-                <strong>&ldquo;{search}&rdquo;</strong>
+                <strong>&ldquo;{query}&rdquo;</strong>
               </span>
             )}`
           : t`View documentation`,
-        keywords: search, // Always match the search string
+        keywords: query, // Always match the query string
         icon: () => <Icon name="document" />,
         perform: () => {
           const host = "https://www.metabase.com";
-          if (search) {
-            const params = new URLSearchParams({ query: search });
+          if (query) {
+            const params = new URLSearchParams({ query: query });
             // TODO: find the documentation search URL in the right way
             window.open(`${host}/search?${params}`);
           } else {
@@ -116,7 +129,7 @@ export const useCommandPalette = ({
       },
     ];
     return ret;
-  }, [search]);
+  }, [query]);
 
   const searchResultActions = useMemo<PaletteAction[]>(() => {
     const ret: PaletteAction[] = [];
@@ -124,12 +137,15 @@ export const useCommandPalette = ({
       ret.push({
         id: "search-is-loading",
         name: "Loading...",
+        keywords: query,
         component: <Loader size="sm" />,
+        section: "Search results",
       });
     } else if (searchError) {
       ret.push({
         id: "search-error",
         name: t`Could not load search results`,
+        section: "Search results",
       });
     } else if (debouncedSearchText) {
       if (searchResults?.length) {
@@ -151,35 +167,22 @@ export const useCommandPalette = ({
       } else {
         ret.push({
           id: "no-search-results",
-          name: t`No results`,
+          name: t`No results for “${query}”`,
+          keywords: query,
+          section: "Search results",
+          isButton: false,
         });
       }
     }
     return ret;
   }, [
     dispatch,
+    query,
     debouncedSearchText,
     isSearchLoading,
     searchError,
     searchResults,
   ]);
-
-  const adminSettingsActions: PaletteAction[] = useMemo(() => {
-    return filteredAdmin.map(s => ({
-      parent: "admin_settings",
-      id: s.display_name,
-      name: s.display_name,
-      icon: <Icon name="gear" />,
-      perform: () => {
-        dispatch(
-          push({
-            pathname: s.path,
-            hash: `#${s.key}`,
-          }),
-        );
-      },
-    }));
-  }, [filteredAdmin, dispatch]);
 
   return [
     ...basicActions,
