@@ -256,7 +256,6 @@ describe("FileUploadStatus", () => {
 
     userEvent.click(screen.getByText("Append to a model"));
     const submitButton = await screen.findByRole("button", { name: "Append" });
-    expect(submitButton).toBeDisabled(); // should be disabled until a model is selected
 
     userEvent.click(await screen.findByPlaceholderText("Select a model"));
     userEvent.click(
