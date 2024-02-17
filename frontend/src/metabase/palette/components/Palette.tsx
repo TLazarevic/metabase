@@ -37,7 +37,7 @@ const PaletteFooter = () => {
   return (
     <PaletteFooterContainer p=".5rem 1.33rem" gap="1.5rem">
       <Flex gap=".33rem">
-        <Icon color={color("light")} name="sort" />
+        <Icon color={color("text-light")} name="sort" />
         <Text tt="uppercase" weight="bold" size="10px" color={color("medium")}>
           Select
         </Text>
@@ -53,7 +53,7 @@ const PaletteFooter = () => {
 };
 
 const EnterIcon = ({
-  fill = color("light"),
+  fill = color("text-light"),
   active = true,
 }: {
   fill?: string;
@@ -194,7 +194,7 @@ export const PaletteResults = () => {
           const paletteAction =
             typeof item === "object" ? paletteActions.get(item.id) : null;
           return (
-            <PaletteResult active={active && paletteAction?.isButton}>
+            <PaletteResult active={active}>
               {typeof item === "string" ? (
                 <PaletteResultsSectionHeader>
                   {item}
