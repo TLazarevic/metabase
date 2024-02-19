@@ -60,6 +60,37 @@ const getYAxisTicksWidth = (
   return Math.max(...measuredValues);
 };
 
+const getXAxisTicksWidth = (
+  dataset: ChartDataset,
+  settings: ComputedVisualizationSettings,
+  formatter: AxisFormatter,
+  renderingContext: RenderingContext,
+) => {
+  const xAxisDisplay = settings["graph.x_axis.axis_enabled"];
+
+  if (!xAxisDisplay) {
+    return 0;
+  }
+
+  if (xAxisDisplay === "rotate-90") {
+    return CHART_STYLE.axisTicks.size;
+  }
+
+  const tickWidths = dataset.map(datum => {
+    return renderingContext.measureText(formatter(datum[X_AXIS_DATA_KEY]), {
+      ...CHART_STYLE.axisTicks,
+      family: renderingContext.fontFamily,
+    });
+  });
+  const maxTickWidth = Math.max(...tickWidths);
+
+  if (xAxisDisplay === "rotate-45") {
+    return maxTickWidth / Math.sqrt(2);
+  }
+
+  return maxTickWidth;
+};
+
 const getXAxisTicksHeight = (
   dataset: ChartDataset,
   settings: ComputedVisualizationSettings,
@@ -108,6 +139,7 @@ export const getTicksDimensions = (
     yTicksWidthLeft: 0,
     yTicksWidthRight: 0,
     xTicksHeight: 0,
+    xTicksWidth: 0,
   };
 
   if (chartModel.leftAxisModel) {
@@ -136,14 +168,39 @@ export const getTicksDimensions = (
       ) +
       CHART_STYLE.axisTicksMarginX +
       (hasTimelineEvents ? CHART_STYLE.timelineEvents.height : 0);
+
+    ticksDimensions.xTicksWidth = getXAxisTicksWidth(
+      chartModel.dataset,
+      settings,
+      chartModel.xAxisModel.formatter,
+      renderingContext,
+    );
   }
 
   return ticksDimensions;
 };
 
+const getExtraSidePadding = (
+  xAxisTickOverflow: number,
+  yAxisNameTotalWidth: number,
+  yAxisTicksWidth: number,
+  padding: number,
+  yAxisModel: YAxisModel | null,
+) => {
+  if (yAxisModel?.label == null) {
+    return xAxisTickOverflow > padding ? xAxisTickOverflow : 0;
+  }
+
+  return xAxisTickOverflow >
+    yAxisNameTotalWidth + yAxisTicksWidth + CHART_STYLE.axisTicksMarginY
+    ? xAxisTickOverflow
+    : yAxisNameTotalWidth;
+};
+
 export const getChartPadding = (
   chartModel: CartesianChartModel,
   settings: ComputedVisualizationSettings,
+  tickDimensions: TicksDimensions,
 ): Padding => {
   const padding: Padding = {
     top: CHART_STYLE.padding.y,
@@ -160,13 +217,22 @@ export const getChartPadding = (
 
   const yAxisNameTotalWidth =
     CHART_STYLE.axisName.size / 2 + CHART_STYLE.axisNameMargin;
+  const xAxisTickOverflow = tickDimensions.xTicksWidth / 2;
 
-  if (chartModel.leftAxisModel?.label) {
-    padding.left += yAxisNameTotalWidth;
-  }
-  if (chartModel.rightAxisModel?.label) {
-    padding.right += yAxisNameTotalWidth;
-  }
+  padding.left += getExtraSidePadding(
+    xAxisTickOverflow,
+    yAxisNameTotalWidth,
+    tickDimensions.yTicksWidthLeft,
+    padding.left,
+    chartModel.leftAxisModel,
+  );
+  padding.right += getExtraSidePadding(
+    xAxisTickOverflow,
+    yAxisNameTotalWidth,
+    tickDimensions.yTicksWidthRight,
+    padding.right,
+    chartModel.rightAxisModel,
+  );
 
   const hasXAxisName = settings["graph.x_axis.labels_enabled"];
   if (hasXAxisName) {
@@ -190,7 +256,7 @@ export const getChartMeasurements = (
     hasTimelineEvents,
     renderingContext,
   );
-  const padding = getChartPadding(chartModel, settings);
+  const padding = getChartPadding(chartModel, settings, ticksDimensions);
 
   const boundaryWidth =
     chartWidth -
