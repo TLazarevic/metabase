@@ -22,8 +22,8 @@ export const ItemList = ({
 }) => {
   if (isLoading) {
     return (
-      <Box miw={310}>
-        <Center p="lg">
+      <Box miw={310} h="100%">
+        <Center p="lg" h="100%">
           <Loader />
         </Center>
       </Box>
