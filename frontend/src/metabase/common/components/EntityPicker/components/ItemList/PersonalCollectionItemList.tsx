@@ -16,8 +16,9 @@ export const PersonalCollectionsItemList = ({
   selectedItem,
   folderModel,
 }: PersonalCollectionsItemListProps) => {
-  // TODO: see if we can make personal-only flag faster
-  const { data: collections, isLoading } = useCollectionListQuery();
+  const { data: collections, isLoading } = useCollectionListQuery({
+    query: { "personal-only": true },
+  });
 
   const topLevelPersonalCollections = useMemo(
     () => getSortedTopLevelPersonalCollections(collections) as PickerItem[],
