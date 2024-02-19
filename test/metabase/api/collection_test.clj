@@ -626,6 +626,7 @@
                                                                         :most_recent         true}]
         (is (= (mt/obj->json->obj
                 [{:id                  card-id
+                  :location            nil
                   :name                (:name card)
                   :collection_position nil
                   :collection_preview  true
