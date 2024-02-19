@@ -38,7 +38,8 @@ import trendComboPower from "./trend-combo-power.json";
 import trendComboLog from "./trend-combo-log.json";
 import combinedBarTimeSeriesDifferentGranularityWithBreakout from "./combined-bar-timeseries-different-granularity-with-breakout.json";
 import barsBreakoutSortedWithNegativeValuesPowerYAxis from "./bars-breakout-sorted-with-negative-values-power-y-axis.json";
-import numbericXAxisIncludesZero37082 from "./numeric-x-axis-includes-zero-37082.json";
+import numericXAxisIncludesZero37082 from "./numeric-x-axis-includes-zero-37082.json";
+import longDimensionNameCutOff37420 from "./long-dimension-name-cut-off-37420.json";
 
 export const data = {
   lineLinearXScale,
@@ -81,5 +82,6 @@ export const data = {
   trendComboPower,
   trendComboLog,
   combinedBarTimeSeriesDifferentGranularityWithBreakout,
-  numbericXAxisIncludesZero37082,
+  numericXAxisIncludesZero37082,
+  longDimensionNameCutOff37420,
 };
