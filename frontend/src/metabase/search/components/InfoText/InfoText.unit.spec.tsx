@@ -261,7 +261,7 @@ describe("InfoText", () => {
       });
 
       expect(screen.getByTestId("revision-history-button")).toHaveTextContent(
-        `Created by you`,
+        "Created by you",
       );
     });
 

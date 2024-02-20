@@ -17,7 +17,7 @@ export const underlyingRecordsDrill: Drill<
   const tableTitle =
     tableName && isShortTableName(tableName)
       ? inflect(tableName, rowCount)
-      : ngettext(msgid`record`, `records`, rowCount);
+      : ngettext(msgid`record`, "records", rowCount);
 
   const actionTitle = ngettext(
     // extra argument is required to avoid a collision with a singular form translation (metabase#33079)

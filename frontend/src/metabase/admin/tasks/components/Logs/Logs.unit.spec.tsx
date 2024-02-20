@@ -22,7 +22,7 @@ describe("Logs", () => {
       render(<Logs />);
       await waitFor(() => {
         expect(
-          screen.getByText(`There's nothing here, yet.`),
+          screen.getByText("There's nothing here, yet."),
         ).toBeInTheDocument();
       });
     });
@@ -46,7 +46,7 @@ describe("Logs", () => {
     });
 
     it("should display server error message if an error occurs", async () => {
-      const errMsg = `An unexpected error occured.`;
+      const errMsg = "An unexpected error occured.";
       fetchMock.get("path:/api/util/logs", {
         status: 500,
         body: { message: errMsg },

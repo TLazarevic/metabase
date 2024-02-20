@@ -161,7 +161,7 @@ export const EditApiKeyModal = ({
                   size="sm"
                   styles={{
                     input: {
-                      color: `black !important`,
+                      color: "black !important",
                       fontFamily: fontFamilyMonospace as string,
                     },
                   }}

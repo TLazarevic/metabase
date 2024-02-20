@@ -72,7 +72,7 @@ export const trackDashboardSaved = ({
 
 export const trackCardMoved = (dashboardId: DashboardId) => {
   trackSchemaEvent("dashboard", DASHBOARD_SCHEMA_VERSION, {
-    event: `card_moved_to_tab`,
+    event: "card_moved_to_tab",
     dashboard_id: dashboardId,
   });
 };

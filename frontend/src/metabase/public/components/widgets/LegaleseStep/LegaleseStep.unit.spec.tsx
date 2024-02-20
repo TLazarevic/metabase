@@ -40,7 +40,7 @@ describe("LegaleseStep", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        `When you embed charts or dashboards from Metabase in your own application that application isn't subject to the Affero General Public License that covers the rest of Metabase, provided you keep the Metabase logo and the "Powered by Metabase" visible on those embeds.`,
+        'When you embed charts or dashboards from Metabase in your own application that application isn\'t subject to the Affero General Public License that covers the rest of Metabase, provided you keep the Metabase logo and the "Powered by Metabase" visible on those embeds.',
       ),
     ).toBeInTheDocument();
     expect(

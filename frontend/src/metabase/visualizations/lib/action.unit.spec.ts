@@ -64,9 +64,9 @@ describe("performAction", () => {
       sitePath: "http://localhost/Metabase/path/",
       name: "with 2 levels deep subpath with trailing slash",
     },
-  ])(`when site URL is $name`, ({ sitePath }) => {
+  ])("when site URL is $name", ({ sitePath }) => {
     it.each(["/", "/question/1", "/question/1/"])(
-      `should redirect using router when using a relative URL with leading slash: "%s"`,
+      'should redirect using router when using a relative URL with leading slash: "%s"',
       url => {
         MetabaseSettings.set("site-url", sitePath);
         const action: UrlClickAction = {
@@ -104,7 +104,7 @@ describe("performAction", () => {
     );
 
     it.each(["auto/dashboard/adhoc/123Abc", "auto/dashboard/adhoc/123Abc/"])(
-      `should redirect using router when using a relative URL: "%s"`,
+      'should redirect using router when using a relative URL: "%s"',
       url => {
         MetabaseSettings.set("site-url", sitePath);
         const action: UrlClickAction = {

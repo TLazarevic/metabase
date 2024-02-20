@@ -446,7 +446,7 @@ describe("Static Embed Setup phase", () => {
         ).toBeVisible();
 
         expect(screen.getByTestId("text-editor-mock")).toHaveTextContent(
-          `"#theme=transparent&bordered=true&titled=true"`,
+          '"#theme=transparent&bordered=true&titled=true"',
         );
 
         userEvent.click(
@@ -456,7 +456,7 @@ describe("Static Embed Setup phase", () => {
         );
 
         expect(screen.getByTestId("text-editor-mock")).toHaveTextContent(
-          `"#theme=transparent&bordered=true&titled=false"`,
+          '"#theme=transparent&bordered=true&titled=false"',
         );
       });
 
@@ -615,7 +615,8 @@ describe("Static Embed Setup phase", () => {
 
     userEvent.click(screen.getByText("Transparent"));
 
-    const appearanceChangedCode = `"#theme=transparent&bordered=true&titled=true"`;
+    const appearanceChangedCode =
+      '"#theme=transparent&bordered=true&titled=true"';
 
     expect(
       screen.getByTestId("text-editor-mock-highlighted-code"),

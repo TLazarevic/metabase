@@ -1349,7 +1349,7 @@ function createTemporalBucketingOptions(): Record<
     },
   };
 }
-``;
+("");
 function createNumericBinningOptions(): Record<string, FieldDimensionOption> {
   return {
     "29": {

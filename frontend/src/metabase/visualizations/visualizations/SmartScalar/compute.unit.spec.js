@@ -646,7 +646,7 @@ describe("SmartScalar > compute", () => {
           expect(getTrend(trend)).toEqual(expected);
         });
 
-        describe(`invalid options`, () => {
+        describe("invalid options", () => {
           const comparisonType = COMPARISON_TYPES.PREVIOUS_PERIOD;
           const settings = createMockVisualizationSettings({
             "scalar.field": "Count",
@@ -984,7 +984,7 @@ describe("SmartScalar > compute", () => {
           },
         );
 
-        describe(`invalid options`, () => {
+        describe("invalid options", () => {
           const comparisonType = COMPARISON_TYPES.PERIODS_AGO;
           const createSettings = value =>
             createMockVisualizationSettings({
@@ -1273,7 +1273,7 @@ describe("SmartScalar > compute", () => {
         });
       });
 
-      describe(`invalid comparison type`, () => {
+      describe("invalid comparison type", () => {
         const createSettings = type =>
           createMockVisualizationSettings({
             "scalar.field": "Count",

@@ -18,25 +18,25 @@ export const getEmbedClientCodeExampleOptions =
     {
       id: "pug",
       name: "Pug / Jade",
-      source: getPugSource({ iframeUrl: `iframeUrl` }),
+      source: getPugSource({ iframeUrl: "iframeUrl" }),
       mode: "ace/mode/jade",
     },
     {
       id: "mustache",
       name: "Mustache",
-      source: getHtmlSource({ iframeUrl: `"{{iframeUrl}}"` }),
+      source: getHtmlSource({ iframeUrl: '"{{iframeUrl}}"' }),
       mode: "ace/mode/html",
     },
     {
       id: "erb",
       name: "ERB",
-      source: getHtmlSource({ iframeUrl: `"<%= @iframe_url %>"` }),
+      source: getHtmlSource({ iframeUrl: '"<%= @iframe_url %>"' }),
       mode: "ace/mode/html_ruby",
     },
     {
       id: "jsx",
       name: "JSX",
-      source: getJsxSource({ iframeUrl: `{iframeUrl}` }),
+      source: getJsxSource({ iframeUrl: "{iframeUrl}" }),
       mode: "ace/mode/jsx",
     },
   ];

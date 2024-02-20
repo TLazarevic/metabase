@@ -124,7 +124,7 @@ describe("Static Embed Setup phase - EE, with token", () => {
           userEvent.click(screen.getByLabelText("Download data"));
 
           expect(screen.getByTestId("text-editor-mock")).toHaveTextContent(
-            `hide_download_button=true`,
+            "hide_download_button=true",
           );
         });
       }

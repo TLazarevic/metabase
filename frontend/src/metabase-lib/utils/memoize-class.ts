@@ -44,7 +44,7 @@ export function memoizeClass<T>(
       const method = descriptor.value;
       // If we don't get a descriptor.value, it must have a getter (i.e., ES6 class properties)
       if (!method) {
-        throw new TypeError(`Class properties cannot be memoized`);
+        throw new TypeError("Class properties cannot be memoized");
       }
       // Method should be a function/method
       else if (typeof method !== "function") {

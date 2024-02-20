@@ -383,7 +383,7 @@ const RuleEditor = ({
           <h3 className="mt3 mb1">
             {ngettext(
               msgid`When a cell in this column…`,
-              `When any cell in these columns…`,
+              "When any cell in these columns…",
               selectedColumns.length,
             )}
           </h3>

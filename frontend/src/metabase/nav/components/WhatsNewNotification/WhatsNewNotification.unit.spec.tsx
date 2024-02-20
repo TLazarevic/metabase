@@ -21,7 +21,7 @@ import { createMockState } from "metabase-types/store/mocks";
 
 import { WhatsNewNotification } from "./WhatsNewNotification";
 
-const LAST_ACK_SETTINGS_URL = `path:/api/setting/last-acknowledged-version`;
+const LAST_ACK_SETTINGS_URL = "path:/api/setting/last-acknowledged-version";
 
 const notification = () => screen.queryByText("See what's new");
 

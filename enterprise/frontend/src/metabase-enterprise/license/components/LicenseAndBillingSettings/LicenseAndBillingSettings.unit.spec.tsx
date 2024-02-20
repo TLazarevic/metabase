@@ -145,12 +145,12 @@ describe("LicenseAndBilling", () => {
       // test datetime format
       expect(await screen.findByText(nextCharge.name)).toBeInTheDocument();
       expect(
-        await screen.findByText(`Monday, January 22, 2024`),
+        await screen.findByText("Monday, January 22, 2024"),
       ).toBeInTheDocument();
 
       // test currency
       expect(await screen.findByText(nextChargeValue.name)).toBeInTheDocument();
-      expect(await screen.findByText(`$500.00`)).toBeInTheDocument();
+      expect(await screen.findByText("$500.00")).toBeInTheDocument();
 
       // test float
       expect(await screen.findByText(float.name)).toBeInTheDocument();

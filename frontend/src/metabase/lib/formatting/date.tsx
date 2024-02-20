@@ -14,7 +14,7 @@ import {
 } from "./datetime-utils";
 import type { OptionsType } from "./types";
 
-const EN_DASH = `–`;
+const EN_DASH = "–";
 
 type DEFAULT_DATE_FORMATS_TYPE = { [key: string]: string };
 const DEFAULT_DATE_FORMATS: DEFAULT_DATE_FORMATS_TYPE = {

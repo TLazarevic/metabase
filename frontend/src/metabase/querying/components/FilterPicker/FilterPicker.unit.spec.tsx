@@ -324,7 +324,7 @@ describe("FilterPicker", () => {
         ["specific", createQueryWithSpecificDateFilter()],
         ["relative", createQueryWithRelativeDateFilter()],
         ["exclude", createQueryWithExcludeDateFilter()],
-      ])(`should open the date picker for a %s date filter`, (type, opts) => {
+      ])("should open the date picker for a %s date filter", (type, opts) => {
         setup(opts);
         expect(
           screen.getByTestId("datetime-filter-picker"),

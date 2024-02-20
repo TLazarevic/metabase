@@ -110,7 +110,7 @@ export function setup(
   });
 
   fetchMock.get(
-    { url: `path:/api/pulse`, query: { dashboard_id: dashboard.id } },
+    { url: "path:/api/pulse", query: { dashboard_id: dashboard.id } },
     [],
   );
 

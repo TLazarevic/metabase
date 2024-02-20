@@ -611,7 +611,7 @@ describe("formatting", () => {
     ];
 
     test.each(FORMAT_TIME_TESTS)(
-      `formatTime(%p) to be %p`,
+      "formatTime(%p) to be %p",
       (value, resultStr) => {
         const result = formatTime(value);
         expect(result).toBe(resultStr);

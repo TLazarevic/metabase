@@ -88,7 +88,7 @@ const setup = async ({
     params as unknown as Record<string, string>,
   ).toString();
 
-  const initialRoute = searchParams ? `/search?${searchParams}` : `/search`;
+  const initialRoute = searchParams ? `/search?${searchParams}` : "/search";
 
   const { history } = renderWithProviders(
     <Route path="search" component={SearchApp} />,

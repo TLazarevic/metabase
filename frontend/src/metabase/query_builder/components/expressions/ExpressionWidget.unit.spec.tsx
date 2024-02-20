@@ -90,7 +90,7 @@ describe("ExpressionWidget", () => {
     expect(getRecentExpressionClauseInfo().displayName).toBe("1 + 1");
   });
 
-  it(`should render interactive header if it is passed`, () => {
+  it("should render interactive header if it is passed", () => {
     const mockTitle = "Some Title";
     const onClose = jest.fn();
     setup({

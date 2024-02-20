@@ -133,7 +133,7 @@ export function publicQuestion({
 }
 
 export function embedCard(token: string, type: string | null = null) {
-  return `/embed/question/${token}` + (type ? `.${type}` : ``);
+  return `/embed/question/${token}` + (type ? `.${type}` : "");
 }
 
 export function tableRowsQuery(

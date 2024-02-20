@@ -57,5 +57,5 @@ export function optionsToHashParams(
     }
   }
   const query = querystring.stringify(options);
-  return query ? `#${query}` : ``;
+  return query ? `#${query}` : "";
 }

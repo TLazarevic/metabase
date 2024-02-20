@@ -9,7 +9,7 @@ import { createEntity } from "metabase/lib/entities";
 import { BookmarkSchema } from "metabase/schema";
 import { BookmarkApi } from "metabase/services";
 
-const REORDER_ACTION = `metabase/entities/bookmarks/REORDER_ACTION`;
+const REORDER_ACTION = "metabase/entities/bookmarks/REORDER_ACTION";
 
 const Bookmarks = createEntity({
   name: "bookmarks",

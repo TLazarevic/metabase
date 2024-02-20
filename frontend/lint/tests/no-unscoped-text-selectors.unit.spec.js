@@ -15,12 +15,12 @@ const blockWrapper = (content, blockType = "it") => `
 `;
 
 const validCases = [
-  `cy.get('#my-div').within(() => findByText('foo'));`,
+  "cy.get('#my-div').within(() => findByText('foo'));",
   `cy.get('#my-div').within(() => {
     findByText('foo')
   });`,
-  `cy.get('#my-div').findByText('foo');`,
-  `cy.findByLabelText('label-name').findByText('this is fine');`,
+  "cy.get('#my-div').findByText('foo');",
+  "cy.findByLabelText('label-name').findByText('this is fine');",
   `cy
     .findByLabelText('label-name')
     .findByText('this is fine')
@@ -29,7 +29,7 @@ const validCases = [
   `cy.get('#my-div').within(() => {
     cy.contains('my string of text').click();
   });`,
-  `cy.get('#my-div').contains('my string of text').click();`,
+  "cy.get('#my-div').contains('my string of text').click();",
 ];
 
 const invalidCases = [

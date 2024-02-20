@@ -14,7 +14,7 @@ export const BillingInfoCard = styled(Card)`
 export const BillingInfoRowContainer = styled.div<{ extraPadding?: boolean }>`
   display: flex;
   justify-content: space-between;
-  padding: ${({ extraPadding }) => (extraPadding ? `1.5rem` : `0.5rem`)} 1rem;
+  padding: ${({ extraPadding }) => (extraPadding ? "1.5rem" : "0.5rem")} 1rem;
   align-items: center;
 
   &:not(:last-child) {
