@@ -138,6 +138,7 @@ type OwnProps = typeof NativeQueryEditor.defaultProps & {
   cancelQuery?: () => void;
   closeSnippetModal: () => void;
   onSetDatabaseId: (id: DatabaseId) => void;
+  lastUsedDatabaseId: DatabaseId | null;
 };
 
 interface StateProps {
@@ -681,7 +682,7 @@ export class NativeQueryEditor extends Component<
     this.props.setIsNativeEditorOpen?.(!this.props.isNativeEditorOpen);
   };
 
-  /// Change the Database we're currently editing a query for.
+  // Change the Database we're currently editing a query for.
   setDatabaseId = (databaseId: DatabaseId) => {
     const { query, setDatasetQuery, question, onSetDatabaseId } = this.props;
     if (question.databaseId() !== databaseId) {
@@ -772,6 +773,7 @@ export class NativeQueryEditor extends Component<
       sidebarFeatures,
       canChangeDatabase,
       setParameterValueToDefault,
+      lastUsedDatabaseId,
     } = this.props;
 
     const isPromptInputVisible = this.isPromptInputVisible();
@@ -796,6 +798,7 @@ export class NativeQueryEditor extends Component<
               <DataSourceSelectors
                 isNativeEditorOpen={isNativeEditorOpen}
                 query={query}
+                lastUsedDatabaseId={lastUsedDatabaseId}
                 question={question}
                 readOnly={readOnly}
                 setDatabaseId={this.setDatabaseId}
