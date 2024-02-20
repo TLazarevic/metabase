@@ -7,6 +7,7 @@ import type { CollectionEndpoints } from "__support__/server-mocks";
 import {
   setupCollectionByIdEndpoint,
   setupCollectionsEndpoints,
+  setupCollectionItemsEndpoint,
 } from "__support__/server-mocks";
 import { mockSettings } from "__support__/settings";
 import {
@@ -15,14 +16,16 @@ import {
   screen,
   waitFor,
 } from "__support__/ui";
-import { openCollection } from "metabase/containers/ItemPicker/test-utils";
 import { SaveQuestionModal } from "metabase/containers/SaveQuestionModal";
 import { ROOT_COLLECTION } from "metabase/entities/collections";
 import * as Lib from "metabase-lib";
 import Question from "metabase-lib/Question";
 import type StructuredQuery from "metabase-lib/queries/StructuredQuery";
 import type { CollectionId } from "metabase-types/api";
-import { createMockCollection } from "metabase-types/api/mocks";
+import {
+  createMockCollection,
+  createMockCollectionItem,
+} from "metabase-types/api/mocks";
 import {
   ORDERS_ID,
   SAMPLE_DB_ID,

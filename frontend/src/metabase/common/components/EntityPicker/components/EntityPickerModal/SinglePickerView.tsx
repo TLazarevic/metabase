@@ -1,5 +1,6 @@
-import { Box } from "metabase/ui";
 import { color } from "metabase/lib/colors";
+import { Box } from "metabase/ui";
+
 import type { EntityTab } from "../../types";
 
 export const SinglePickerView = ({ tab }: { tab: EntityTab }) => {

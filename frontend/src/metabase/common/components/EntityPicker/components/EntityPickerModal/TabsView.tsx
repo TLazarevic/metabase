@@ -1,12 +1,11 @@
 import { Tabs, Icon } from "metabase/ui";
-
 import type { SearchResult } from "metabase-types/api";
+
+import type { EntityTab, PickerItem } from "../../types";
 import {
   EntityPickerSearchTab,
   EntityPickerSearchResults,
 } from "../EntityPickerSearch";
-
-import type { EntityTab, PickerItem } from "../../types";
 
 export const TabsView = ({
   tabs,

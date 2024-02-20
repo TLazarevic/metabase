@@ -1,15 +1,18 @@
-import fetchMock from "fetch-mock";
 import userEvent from "@testing-library/user-event";
+import fetchMock from "fetch-mock";
+
+import { renderWithProviders, screen, within } from "__support__/ui";
 import type { IconName } from "metabase/ui";
 import { Button } from "metabase/ui";
 import {
   createMockSearchResult,
   createMockSearchResults,
 } from "metabase-types/api/mocks";
-import { renderWithProviders, screen, within } from "__support__/ui";
+
 import type { PickerItem, EntityTab } from "../../types";
-import { EntityPickerModal } from "./EntityPickerModal";
+
 import type { EntityPickerModalOptions } from "./EntityPickerModal";
+import { EntityPickerModal } from "./EntityPickerModal";
 
 interface setupProps {
   title?: string;

@@ -5,6 +5,7 @@ import { push } from "react-router-redux";
 
 import { useDispatch } from "metabase/lib/redux";
 import { isSyncCompleted } from "metabase/lib/syncing";
+import { PLUGIN_MODERATION } from "metabase/plugins";
 import type { WrappedResult } from "metabase/search/types";
 import { Group, Loader, Icon } from "metabase/ui";
 

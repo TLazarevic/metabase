@@ -1,5 +1,6 @@
-import type { SearchResult, SearchListQuery } from "metabase-types/api";
 import type { IconName } from "metabase/ui";
+import type { SearchResult, SearchListQuery } from "metabase-types/api";
+
 import type { CollectionPickerOptions } from "./SpecificEntityPickers/CollectionPicker";
 import type { EntityPickerModalOptions } from "./components/EntityPickerModal";
 

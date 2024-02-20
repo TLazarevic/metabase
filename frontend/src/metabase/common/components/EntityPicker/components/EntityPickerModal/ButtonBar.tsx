@@ -1,6 +1,7 @@
 import { t } from "ttag";
-import { Button, Flex } from "metabase/ui";
+
 import { color } from "metabase/lib/colors";
+import { Button, Flex } from "metabase/ui";
 
 export const ButtonBar = ({
   onConfirm,

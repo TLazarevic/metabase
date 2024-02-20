@@ -1,12 +1,13 @@
 import fetchMock from "fetch-mock";
-import { act, renderWithProviders, screen } from "__support__/ui";
 
 import { setupCollectionItemsEndpoint } from "__support__/server-mocks";
+import { act, renderWithProviders, screen } from "__support__/ui";
+import type { CollectionId } from "metabase-types/api";
 import {
   createMockCollection,
   createMockCollectionItem,
 } from "metabase-types/api/mocks";
-import type { CollectionId } from "metabase-types/api";
+
 import { CollectionPicker } from "./CollectionPicker";
 
 type MockCollection = {

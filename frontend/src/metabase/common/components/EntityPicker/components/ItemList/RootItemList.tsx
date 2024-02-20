@@ -1,9 +1,11 @@
 import { useAsync } from "react-use";
 import { t } from "ttag";
+
+import { useCollectionQuery } from "metabase/common/hooks";
+import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
 import { useSelector } from "metabase/lib/redux";
 import { getUser, getUserIsAdmin } from "metabase/selectors/user";
-import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
-import { useCollectionQuery } from "metabase/common/hooks";
+
 import type { EntityPickerOptions, PickerItem } from "../../types";
 
 import { ItemList } from "./ItemList";

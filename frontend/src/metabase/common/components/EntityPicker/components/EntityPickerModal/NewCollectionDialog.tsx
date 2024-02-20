@@ -1,10 +1,8 @@
 import { t } from "ttag";
-import { Modal, Button, Loader } from "metabase/ui";
-import type { CollectionId } from "metabase-types/api";
-import FormFooter from "metabase/core/components/FormFooter";
-import { useDispatch } from "metabase/lib/redux";
-import Collections from "metabase/entities/collections";
 
+import { useCollectionQuery } from "metabase/common/hooks";
+import FormFooter from "metabase/core/components/FormFooter";
+import Collections from "metabase/entities/collections";
 import {
   Form,
   FormProvider,
@@ -12,7 +10,9 @@ import {
   FormErrorMessage,
   FormSubmitButton,
 } from "metabase/forms";
-import { useCollectionQuery } from "metabase/common/hooks";
+import { useDispatch } from "metabase/lib/redux";
+import { Modal, Button, Loader } from "metabase/ui";
+import type { CollectionId } from "metabase-types/api";
 
 interface NewCollectionDialogProps {
   isOpen: boolean;

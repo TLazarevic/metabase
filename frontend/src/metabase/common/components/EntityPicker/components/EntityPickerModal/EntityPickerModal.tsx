@@ -1,18 +1,18 @@
 import { useState, useMemo } from "react";
 import { t } from "ttag";
 
-import { Modal } from "metabase/ui";
 import ErrorBoundary from "metabase/ErrorBoundary";
-import type { SearchResult } from "metabase-types/api";
 import { useModalOpen } from "metabase/hooks/use-modal-open";
+import { Modal } from "metabase/ui";
+import type { SearchResult } from "metabase-types/api";
 
 import type { EntityPickerOptions, EntityTab, PickerItem } from "../../types";
 import { EntityPickerSearchInput } from "../EntityPickerSearch/EntityPickerSearch";
 
 import { ButtonBar } from "./ButtonBar";
-import { TabsView } from "./TabsView";
-import { SinglePickerView } from "./SinglePickerView";
 import { GrowFlex, ModalContent, ModalBody } from "./EntityPickerModal.styled";
+import { SinglePickerView } from "./SinglePickerView";
+import { TabsView } from "./TabsView";
 
 export type EntityPickerModalOptions = {
   showPersonalCollection?: boolean;

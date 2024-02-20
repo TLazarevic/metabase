@@ -9,10 +9,10 @@ import {
   SearchLoadingSpinner,
   EmptyStateContainer,
 } from "metabase/nav/components/search/SearchResults";
+import { PLUGIN_MODERATION } from "metabase/plugins";
 import {
   ItemIcon,
   LoadingSection,
-  ModerationIcon,
   ResultNameSection,
   ResultTitle,
   SearchResultContainer,
@@ -22,7 +22,6 @@ import { Group, Loader, Stack, Title } from "metabase/ui";
 import type { RecentItem } from "metabase-types/api";
 
 import { getItemName, getItemUrl, isItemActive } from "./util";
-import { PLUGIN_MODERATION } from "metabase/plugins";
 
 type RecentsListContentProps = {
   isLoading: boolean;

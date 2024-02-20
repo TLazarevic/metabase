@@ -1,21 +1,23 @@
-import { Flex } from "metabase/ui";
-import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
 import ErrorBoundary from "metabase/ErrorBoundary";
-import { isFolder } from "../../types";
+import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
+import { Flex } from "metabase/ui";
+
 import type {
   EntityPickerOptions,
   TypeWithModel,
   PickerItem,
   PickerState,
 } from "../../types";
+import { isFolder } from "../../types";
 import type { EntityItemListProps } from "../ItemList";
 import {
   RootItemList,
   EntityItemList,
   PersonalCollectionsItemList,
 } from "../ItemList";
-import { ListBox } from "./NestedItemPicker.styled";
+
 import { AutoScrollBox } from "./AutoScrollBox";
+import { ListBox } from "./NestedItemPicker.styled";
 
 export interface NestedItemPickerProps<
   TItem extends TypeWithModel,

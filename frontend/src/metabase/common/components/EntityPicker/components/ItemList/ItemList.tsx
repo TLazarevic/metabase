@@ -1,10 +1,13 @@
 import { t } from "ttag";
-import { Box, Text, NavLink, Loader, Center, Icon, Flex } from "metabase/ui";
-import { VariableSizeItemsVirtualizedList } from "metabase/components/VirtualizedList";
+
 import { CollectionEmptyIcon } from "metabase/collections/components/CollectionEmptyState/CollectionEmptyState";
+import { VariableSizeItemsVirtualizedList } from "metabase/components/VirtualizedList";
 import { color } from "metabase/lib/colors";
+import { Box, Text, NavLink, Loader, Center, Icon, Flex } from "metabase/ui";
+
 import { isFolder, type TypeWithModel } from "../../types";
 import { getIcon, isSelectedItem } from "../../utils";
+
 import { PickerColumn } from "./ItemList.styled";
 
 interface ItemListProps<

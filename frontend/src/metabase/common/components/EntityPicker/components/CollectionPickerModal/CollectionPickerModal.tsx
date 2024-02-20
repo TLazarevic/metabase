@@ -1,12 +1,14 @@
 import { useCallback, useState } from "react";
 import { t } from "ttag";
-import type { SearchResult } from "metabase-types/api";
+
 import type { IconName } from "metabase/ui";
 import { Button, Icon } from "metabase/ui";
-import { EntityPickerModal, defaultOptions } from "../EntityPickerModal";
+import type { SearchResult } from "metabase-types/api";
+
 import { CollectionPicker } from "../../SpecificEntityPickers/CollectionPicker";
-import { NewCollectionDialog } from "../EntityPickerModal/NewCollectionDialog";
 import type { EntityPickerOptions, PickerItem } from "../../types";
+import { EntityPickerModal, defaultOptions } from "../EntityPickerModal";
+import { NewCollectionDialog } from "../EntityPickerModal/NewCollectionDialog";
 
 interface CollectionPickerModalProps {
   title: string;

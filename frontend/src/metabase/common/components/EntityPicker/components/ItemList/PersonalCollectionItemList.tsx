@@ -1,7 +1,10 @@
 import { useMemo } from "react";
-import type { Collection } from "metabase-types/api";
+
 import { useCollectionListQuery } from "metabase/common/hooks";
+import type { Collection } from "metabase-types/api";
+
 import type { EntityPickerOptions, PickerItem } from "../../types";
+
 import { ItemList } from "./ItemList";
 
 interface PersonalCollectionsItemListProps {

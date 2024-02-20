@@ -1,9 +1,7 @@
 import { canonicalCollectionId } from "metabase/collections/utils";
-import { GET } from "metabase/lib/api";
 import { createEntity } from "metabase/lib/entities";
 import { entityForObject } from "metabase/lib/schema";
 import { ObjectUnionSchema } from "metabase/schema";
-
 import { CollectionsApi, SearchApi } from "metabase/services";
 
 import Actions from "./actions";

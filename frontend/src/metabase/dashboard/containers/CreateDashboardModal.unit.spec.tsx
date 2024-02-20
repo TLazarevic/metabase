@@ -2,13 +2,18 @@ import userEvent from "@testing-library/user-event";
 import fetchMock from "fetch-mock";
 
 import { setupEnterpriseTest } from "__support__/enterprise";
-import { setupCollectionsEndpoints } from "__support__/server-mocks";
+import {
+  setupCollectionsEndpoints,
+  setupCollectionItemsEndpoint,
+} from "__support__/server-mocks";
 import { mockSettings } from "__support__/settings";
 import { createMockEntitiesState } from "__support__/store";
-import { renderWithProviders, screen, waitFor } from "__support__/ui";
-import { openCollection } from "metabase/containers/ItemPicker/test-utils";
+import { renderWithProviders, screen, waitFor, within } from "__support__/ui";
 import { ROOT_COLLECTION } from "metabase/entities/collections";
-import { createMockCollection } from "metabase-types/api/mocks";
+import {
+  createMockCollection,
+  createMockCollectionItem,
+} from "metabase-types/api/mocks";
 
 import { CreateDashboardModalConnected } from "./CreateDashboardModal";
 

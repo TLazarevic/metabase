@@ -1,5 +1,6 @@
-import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRef } from "react";
+
 import { Box } from "metabase/ui";
 
 /**

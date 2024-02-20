@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import type { CollectionId, CollectionItem } from "metabase-types/api";
 
-import { useCollectionQuery } from "metabase/common/hooks";
 import { isRootCollection } from "metabase/collections/utils";
+import { useCollectionQuery } from "metabase/common/hooks";
+import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
 import { useSelector } from "metabase/lib/redux";
 import { getUserPersonalCollectionId } from "metabase/selectors/user";
-import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
+import type { CollectionId, CollectionItem } from "metabase-types/api";
+
 import { LoadingSpinner, NestedItemPicker } from "../components";
 import type { PickerState, PickerItem } from "../types";
 

@@ -1,4 +1,5 @@
 import { useSearchListQuery } from "metabase/common/hooks";
+
 import { ItemList } from "./ItemList";
 
 export interface EntityItemListProps<TItem> {

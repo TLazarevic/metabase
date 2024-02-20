@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { usePrevious } from "react-use";
+
 import { HorizontalScrollBox } from "./NestedItemPicker.styled";
 
 const gradualScroll = (container: HTMLDivElement | null) => {

@@ -13,8 +13,6 @@ import { useDispatch, useSelector } from "metabase/lib/redux";
 import { canUseMetabotOnDatabase } from "metabase/metabot/utils";
 import { addUndo } from "metabase/redux/undo";
 import { getSettingsLoading } from "metabase/selectors/settings";
-
-// import { EntityPickerModal } from "metabase/common/components/EntityPicker";
 import type Database from "metabase-lib/metadata/Database";
 import type { CollectionItem, DashboardId } from "metabase-types/api";
 
