@@ -5,7 +5,7 @@ import { useCollectionQuery } from "metabase/common/hooks";
 import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
 import { useSelector } from "metabase/lib/redux";
 import { getUserPersonalCollectionId } from "metabase/selectors/user";
-import type { CollectionId, CollectionItem } from "metabase-types/api";
+import type { CollectionId } from "metabase-types/api";
 
 import { LoadingSpinner, NestedItemPicker } from "../components";
 import type { PickerState, PickerItem } from "../types";
@@ -101,8 +101,8 @@ export const CollectionPicker = ({
 
 const getCollectionIdPath = (
   collection: Pick<
-    CollectionItem,
-    "id" | "effective_location" | "is_personal" | "location"
+    PickerItem,
+    "id" | "location" | "is_personal" | "effective_location"
   >,
   userPersonalCollectionId?: CollectionId,
 ): CollectionId[] => {

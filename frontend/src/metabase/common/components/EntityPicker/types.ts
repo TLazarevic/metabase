@@ -33,7 +33,11 @@ export type EntityPickerOptions = EntityPickerModalOptions &
 export type PickerItem = Pick<
   SearchResult,
   "id" | "name" | "description" | "can_write" | "model"
-> & { location?: string };
+> & {
+  location?: string | null;
+  effective_location?: string | null;
+  is_personal?: boolean;
+};
 
 export type EntityTab = {
   element: JSX.Element;

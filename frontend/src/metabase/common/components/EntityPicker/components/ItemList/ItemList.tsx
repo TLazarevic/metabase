@@ -1,3 +1,4 @@
+import type React from "react";
 import { t } from "ttag";
 
 import { CollectionEmptyIcon } from "metabase/collections/components/CollectionEmptyState/CollectionEmptyState";
@@ -73,7 +74,7 @@ export const ItemList = <
               label={item.name}
               active={isSelected}
               icon={<Icon {...getIcon(item)} />}
-              onClick={e => {
+              onClick={(e: React.MouseEvent) => {
                 e.preventDefault(); // prevent form submission
                 e.stopPropagation(); // prevent parent onClick
                 onClick(item);

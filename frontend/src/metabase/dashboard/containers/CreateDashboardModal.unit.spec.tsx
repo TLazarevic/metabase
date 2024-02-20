@@ -12,7 +12,7 @@ import { renderWithProviders, screen, waitFor, within } from "__support__/ui";
 import { ROOT_COLLECTION } from "metabase/entities/collections";
 import {
   createMockCollection,
-  createMockCollectionItem,
+  createMockCollectionItemFromCollection,
 } from "metabase-types/api/mocks";
 
 import { CreateDashboardModalConnected } from "./CreateDashboardModal";
@@ -64,23 +64,13 @@ function setup({
   setupCollectionItemsEndpoint({
     collection: COLLECTION.ROOT,
     collectionItems: [
-      createMockCollectionItem({
-        ...COLLECTION.PARENT,
-        type: undefined,
-        model: "collection",
-      }),
+      createMockCollectionItemFromCollection(COLLECTION.PARENT),
     ],
   });
 
   setupCollectionItemsEndpoint({
     collection: COLLECTION.PARENT,
-    collectionItems: [
-      createMockCollectionItem({
-        ...COLLECTION.CHILD,
-        type: undefined,
-        model: "collection",
-      }),
-    ],
+    collectionItems: [createMockCollectionItemFromCollection(COLLECTION.CHILD)],
   });
 
   collections

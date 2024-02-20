@@ -706,6 +706,8 @@ describe("SaveQuestionModal", () => {
         collectionItems: [
           createMockCollectionItem({
             ...COLLECTION.PARENT,
+            id: COLLECTION.PARENT.id as number,
+            location: COLLECTION.PARENT.location || "/",
             type: undefined,
             model: "collection",
           }),
@@ -716,6 +718,8 @@ describe("SaveQuestionModal", () => {
         collectionItems: [
           createMockCollectionItem({
             ...COLLECTION.CHILD,
+            id: COLLECTION.CHILD.id as number,
+            location: COLLECTION.CHILD.location || "/",
             type: undefined,
             model: "collection",
           }),

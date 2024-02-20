@@ -77,7 +77,7 @@ export type CollectionItemModel =
   | "collection"
   | "indexed-entity";
 
-export type CollectionItemId = number | CollectionId;
+export type CollectionItemId = number;
 
 export interface CollectionItem {
   id: CollectionItemId;
@@ -97,6 +97,8 @@ export interface CollectionItem {
   type?: string;
   can_write?: boolean;
   "last-edit-info"?: LastEditInfo;
+  location?: string;
+  effective_location?: string;
   getIcon: () => { name: IconName };
   getUrl: (opts?: Record<string, unknown>) => string;
   setArchived?: (isArchived: boolean) => void;

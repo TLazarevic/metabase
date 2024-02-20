@@ -117,7 +117,7 @@ describe("EntityPickerModal", () => {
     const tabs = [
       TEST_TAB,
       {
-        icon: "folder",
+        icon: "folder" as IconName,
         displayName: "All the bar",
         model: "test2",
         element: <TestPicker name="bar" />,

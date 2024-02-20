@@ -191,6 +191,8 @@ const setup = async ({
           .map(c =>
             createMockCollectionItem({
               ...c,
+              id: c.id as number,
+              location: c.location || "/",
               type: undefined,
               model: "collection",
             }),
@@ -204,6 +206,7 @@ const setup = async ({
           .map(d =>
             createMockCollectionItem({
               ...d,
+              id: d.id as number,
               model: "dashboard",
             }),
           ),

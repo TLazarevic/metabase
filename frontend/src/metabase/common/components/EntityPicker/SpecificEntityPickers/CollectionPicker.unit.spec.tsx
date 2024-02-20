@@ -83,10 +83,10 @@ const walkForCollectionItems = (node: any[]) => {
   node.forEach(n => {
     const collectionItems = n.collections.map((c: MockCollection) =>
       createMockCollectionItem({
-        id: c.id,
+        id: c.id as number,
         name: c.name,
         model: "collection",
-        location: c.location,
+        location: c.location || "/",
       }),
     );
 
