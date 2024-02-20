@@ -1,7 +1,13 @@
 import { Flex } from "metabase/ui";
 import { PERSONAL_COLLECTIONS } from "metabase/entities/collections";
 import ErrorBoundary from "metabase/ErrorBoundary";
-import type { PickerState, PickerItem, EntityPickerOptions } from "../../types";
+import { isFolder } from "../../types";
+import type {
+  EntityPickerOptions,
+  TypeWithModel,
+  PickerItem,
+  PickerState,
+} from "../../types";
 import type { EntityItemListProps } from "../ItemList";
 import {
   RootItemList,
@@ -11,31 +17,37 @@ import {
 import { ListBox } from "./NestedItemPicker.styled";
 import { AutoScrollBox } from "./AutoScrollBox";
 
-interface NestedItemPickerProps<T> {
-  onFolderSelect: ({ folder }: { folder: T }) => void;
-  onItemSelect: (item: T) => void;
+export interface NestedItemPickerProps<
+  TItem extends TypeWithModel,
+  TFolder extends TypeWithModel,
+> {
+  onFolderSelect: ({ folder }: { folder: TFolder }) => void;
+  onItemSelect: (item: TItem) => void;
   folderModel: string;
   itemModel: string;
   options: EntityPickerOptions;
-  path: PickerState<T>;
+  path: PickerState<TFolder>;
 }
 
-export const NestedItemPicker = ({
+export function NestedItemPicker<
+  TItem extends TypeWithModel,
+  TFolder extends TypeWithModel,
+>({
   onFolderSelect,
   onItemSelect,
   folderModel,
   options,
   path,
-}: NestedItemPickerProps<PickerItem>) => {
-  const handleFolderSelect = (folder: PickerItem) => {
+}: NestedItemPickerProps<TItem, TFolder>) {
+  const handleFolderSelect = (folder: TFolder) => {
     onFolderSelect({ folder });
   };
 
-  const handleClick = (item: PickerItem) => {
-    if (folderModel.includes(item.model)) {
-      handleFolderSelect(item);
+  const handleClick = (item: TItem | TFolder) => {
+    if (isFolder(item, folderModel)) {
+      handleFolderSelect(item as TFolder);
     } else {
-      onItemSelect(item);
+      onItemSelect(item as TItem);
     }
   };
 
@@ -55,7 +67,7 @@ export const NestedItemPicker = ({
                   query={query}
                   selectedItem={selectedItem}
                   options={options}
-                  onClick={(item: PickerItem) => handleClick(item)}
+                  onClick={(item: TItem | TFolder) => handleClick(item)}
                   folderModel={folderModel}
                 />
               </ErrorBoundary>
@@ -65,7 +77,7 @@ export const NestedItemPicker = ({
       </Flex>
     </AutoScrollBox>
   );
-};
+}
 
 function ListComponent({
   onClick,
@@ -73,7 +85,7 @@ function ListComponent({
   folderModel,
   options,
   query,
-}: EntityItemListProps & { options: EntityPickerOptions }) {
+}: EntityItemListProps<PickerItem> & { options: EntityPickerOptions }) {
   if (!query) {
     return (
       <RootItemList

@@ -3,23 +3,31 @@ import { Box, Text, NavLink, Loader, Center, Icon, Flex } from "metabase/ui";
 import { VariableSizeItemsVirtualizedList } from "metabase/components/VirtualizedList";
 import { CollectionEmptyIcon } from "metabase/collections/components/CollectionEmptyState/CollectionEmptyState";
 import { color } from "metabase/lib/colors";
-import type { PickerItem } from "../../types";
+import { isFolder, type TypeWithModel } from "../../types";
 import { getIcon, isSelectedItem } from "../../utils";
 import { PickerColumn } from "./ItemList.styled";
 
-export const ItemList = ({
+interface ItemListProps<
+  TItem extends TypeWithModel,
+  TFolder extends TypeWithModel,
+> {
+  items?: (TItem | TFolder)[];
+  isLoading?: boolean;
+  onClick: (val: TItem | TFolder) => void;
+  selectedItem: TItem | TFolder | null;
+  folderModel: string;
+}
+
+export const ItemList = <
+  TItem extends TypeWithModel,
+  TFolder extends TypeWithModel,
+>({
   items,
   isLoading = false,
   onClick,
   selectedItem,
   folderModel,
-}: {
-  items?: PickerItem[];
-  isLoading: boolean;
-  onClick: (item: PickerItem) => void;
-  selectedItem: PickerItem | null;
-  folderModel: string;
-}) => {
+}: ItemListProps<TItem, TFolder>) => {
   if (isLoading) {
     return (
       <Box miw={310} h="100%">
@@ -47,14 +55,17 @@ export const ItemList = ({
 
   return (
     <VariableSizeItemsVirtualizedList Wrapper={PickerColumn}>
-      {items.map(item => {
-        const isFolder = folderModel.includes(item.model);
+      {items.map((item: TItem | TFolder) => {
+        const isFolderItem: boolean = isFolder<TItem, TFolder>(
+          item,
+          folderModel,
+        );
         const isSelected = isSelectedItem(item, selectedItem);
         return (
           <div key={`${item.model ?? "collection"}-${item.id}`}>
             <NavLink
               rightSection={
-                isFolder ? <Icon name="chevronright" size={10} /> : null
+                isFolderItem ? <Icon name="chevronright" size={10} /> : null
               }
               label={item.name}
               active={isSelected}

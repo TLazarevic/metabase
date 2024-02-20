@@ -1,22 +1,20 @@
 import { useSearchListQuery } from "metabase/common/hooks";
-
-import type { PickerItem } from "../../types";
 import { ItemList } from "./ItemList";
 
-export interface EntityItemListProps {
+export interface EntityItemListProps<TItem> {
   query: any;
   onClick: (val: any) => void;
-  selectedItem: PickerItem | null;
+  selectedItem: TItem | null;
   folderModel: string;
 }
 
-export const EntityItemList = ({
+export const EntityItemList = <TItem,>({
   query,
   onClick,
   selectedItem,
   folderModel,
-}: EntityItemListProps) => {
-  const { data, isLoading } = useSearchListQuery<PickerItem>({ query });
+}: EntityItemListProps<TItem>) => {
+  const { data, isLoading } = useSearchListQuery<TItem>({ query });
 
   return (
     <ItemList
