@@ -69,26 +69,39 @@ const getXAxisTicksWidth = (
   const xAxisDisplay = settings["graph.x_axis.axis_enabled"];
 
   if (!xAxisDisplay) {
-    return 0;
+    return { firstXTickWidth: 0, lastXTickWidth: 0 };
   }
 
   if (xAxisDisplay === "rotate-90") {
-    return CHART_STYLE.axisTicks.size;
+    return {
+      firstXTickWidth: CHART_STYLE.axisTicks.size,
+      lastXTickWidth: CHART_STYLE.axisTicks.size,
+    };
   }
 
-  const tickWidths = dataset.map(datum => {
-    return renderingContext.measureText(formatter(datum[X_AXIS_DATA_KEY]), {
+  const firstXTickWidth = renderingContext.measureText(
+    formatter(dataset[0][X_AXIS_DATA_KEY]),
+    {
       ...CHART_STYLE.axisTicks,
       family: renderingContext.fontFamily,
-    });
-  });
-  const maxTickWidth = Math.max(...tickWidths);
+    },
+  );
+  const lastXTickWidth = renderingContext.measureText(
+    formatter(dataset[dataset.length - 1][X_AXIS_DATA_KEY]),
+    {
+      ...CHART_STYLE.axisTicks,
+      family: renderingContext.fontFamily,
+    },
+  );
 
   if (xAxisDisplay === "rotate-45") {
-    return maxTickWidth / Math.sqrt(2);
+    return {
+      firstXTickWidth: firstXTickWidth / Math.SQRT2,
+      lastXTickWidth: lastXTickWidth / Math.SQRT2,
+    };
   }
 
-  return maxTickWidth;
+  return { firstXTickWidth, lastXTickWidth };
 };
 
 const getXAxisTicksHeight = (
@@ -121,7 +134,7 @@ const getXAxisTicksHeight = (
   }
 
   if (xAxisDisplay === "rotate-45") {
-    return maxTickWidth / Math.sqrt(2);
+    return maxTickWidth / Math.SQRT2;
   }
 
   console.warn(`Unexpected "graph.x_axis.axis_enabled" value ${xAxisDisplay}`);
@@ -139,7 +152,8 @@ export const getTicksDimensions = (
     yTicksWidthLeft: 0,
     yTicksWidthRight: 0,
     xTicksHeight: 0,
-    xTicksWidth: 0,
+    firstXTickWidth: 0,
+    lastXTickWidth: 0,
   };
 
   if (chartModel.leftAxisModel) {
@@ -169,12 +183,14 @@ export const getTicksDimensions = (
       CHART_STYLE.axisTicksMarginX +
       (hasTimelineEvents ? CHART_STYLE.timelineEvents.height : 0);
 
-    ticksDimensions.xTicksWidth = getXAxisTicksWidth(
+    const { firstXTickWidth, lastXTickWidth } = getXAxisTicksWidth(
       chartModel.dataset,
       settings,
       chartModel.xAxisModel.formatter,
       renderingContext,
     );
+    ticksDimensions.firstXTickWidth = firstXTickWidth;
+    ticksDimensions.lastXTickWidth = lastXTickWidth;
   }
 
   return ticksDimensions;
@@ -200,7 +216,8 @@ const getExtraSidePadding = (
 export const getChartPadding = (
   chartModel: CartesianChartModel,
   settings: ComputedVisualizationSettings,
-  tickDimensions: TicksDimensions,
+  ticksDimensions: TicksDimensions,
+  chartWidth: number,
 ): Padding => {
   const padding: Padding = {
     top: CHART_STYLE.padding.y,
@@ -217,19 +234,39 @@ export const getChartPadding = (
 
   const yAxisNameTotalWidth =
     CHART_STYLE.axisName.size / 2 + CHART_STYLE.axisNameMargin;
-  const xAxisTickOverflow = tickDimensions.xTicksWidth / 2;
+
+  const currentBoundaryWidth =
+    chartWidth -
+    padding.left -
+    padding.right -
+    ticksDimensions.yTicksWidthLeft -
+    ticksDimensions.yTicksWidthRight;
+  const dimensionWidth = currentBoundaryWidth / chartModel.dataset.length;
+  const firstTickPosition = dimensionWidth / 2;
+  const lastTickPosition = currentBoundaryWidth - dimensionWidth / 2;
+
+  const firstTickOverflow = Math.min(
+    ticksDimensions.firstXTickWidth / 2 - firstTickPosition,
+    chartWidth / 4, // don't allow overflow greater than 25% of the chart width
+  );
+  const lastTickOverflow = Math.min(
+    lastTickPosition +
+      ticksDimensions.lastXTickWidth / 2 -
+      currentBoundaryWidth,
+    chartWidth / 4,
+  );
 
   padding.left += getExtraSidePadding(
-    xAxisTickOverflow,
+    firstTickOverflow,
     yAxisNameTotalWidth,
-    tickDimensions.yTicksWidthLeft,
+    ticksDimensions.yTicksWidthLeft,
     padding.left,
     chartModel.leftAxisModel,
   );
   padding.right += getExtraSidePadding(
-    xAxisTickOverflow,
+    lastTickOverflow,
     yAxisNameTotalWidth,
-    tickDimensions.yTicksWidthRight,
+    ticksDimensions.yTicksWidthRight,
     padding.right,
     chartModel.rightAxisModel,
   );
@@ -256,7 +293,12 @@ export const getChartMeasurements = (
     hasTimelineEvents,
     renderingContext,
   );
-  const padding = getChartPadding(chartModel, settings, ticksDimensions);
+  const padding = getChartPadding(
+    chartModel,
+    settings,
+    ticksDimensions,
+    chartWidth,
+  );
 
   const boundaryWidth =
     chartWidth -
