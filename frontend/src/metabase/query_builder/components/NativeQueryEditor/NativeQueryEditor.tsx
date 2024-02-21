@@ -138,7 +138,6 @@ type OwnProps = typeof NativeQueryEditor.defaultProps & {
   cancelQuery?: () => void;
   closeSnippetModal: () => void;
   onSetDatabaseId: (id: DatabaseId) => void;
-  lastUsedDatabaseId: DatabaseId | null;
 };
 
 interface StateProps {
@@ -687,6 +686,7 @@ export class NativeQueryEditor extends Component<
     const { query, setDatasetQuery, question, onSetDatabaseId } = this.props;
     if (question.databaseId() !== databaseId) {
       setDatasetQuery(query.setDatabaseId(databaseId).setDefaultCollection());
+
       onSetDatabaseId(databaseId);
       if (!this.props.readOnly) {
         // HACK: the cursor doesn't blink without this intended small delay
@@ -773,7 +773,6 @@ export class NativeQueryEditor extends Component<
       sidebarFeatures,
       canChangeDatabase,
       setParameterValueToDefault,
-      lastUsedDatabaseId,
     } = this.props;
 
     const isPromptInputVisible = this.isPromptInputVisible();
@@ -798,7 +797,6 @@ export class NativeQueryEditor extends Component<
               <DataSourceSelectors
                 isNativeEditorOpen={isNativeEditorOpen}
                 query={query}
-                lastUsedDatabaseId={lastUsedDatabaseId}
                 question={question}
                 readOnly={readOnly}
                 setDatabaseId={this.setDatabaseId}
