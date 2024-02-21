@@ -83,6 +83,7 @@ function DatasetQueryEditor({
           // which can also cancel the expected query rerun
           // (see https://github.com/metabase/metabase/issues/19180)
           cancelQueryOnLeave={false}
+          shouldPersistLastUsedDatabase={true}
         />
       ) : (
         <ResizableNotebook
