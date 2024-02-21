@@ -87,7 +87,9 @@ function ListComponent({
   folderModel,
   options,
   query,
-}: EntityItemListProps<PickerItem> & { options: EntityPickerOptions }) {
+}: EntityItemListProps<PickerItem, PickerItem> & {
+  options: EntityPickerOptions;
+}) {
   if (!query) {
     return (
       <RootItemList
