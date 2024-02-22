@@ -14,6 +14,7 @@ import type {
 } from "metabase/visualizations/types";
 import { CHART_STYLE } from "metabase/visualizations/echarts/cartesian/constants/style";
 import type { ChartMeasurements } from "../option/types";
+import { isTimeSeriesAxis } from "../model/guards";
 
 const getDayWidth = (
   range: DateRange,
@@ -147,11 +148,11 @@ export const getTimelineEventsModel = (
   height: number,
   renderingContext: RenderingContext,
 ) => {
-  if (timelineEvents.length === 0) {
+  if (timelineEvents.length === 0 || !isTimeSeriesAxis(chartModel.xAxisModel)) {
     return null;
   }
 
-  const dimensionRange = chartModel.xAxisModel.timeSeriesInterval?.range;
+  const dimensionRange = chartModel.xAxisModel.timeSeriesInfo.range;
   if (!dimensionRange) {
     return null;
   }
@@ -168,7 +169,7 @@ export const getTimelineEventsModel = (
 
   const timelineEventsByUnitStart = groupEventsByUnitStart(
     timelineEvents,
-    chartModel.xAxisModel.timeSeriesInterval?.interval,
+    chartModel.xAxisModel.timeSeriesInfo.unit,
   );
 
   const chartMeasurements = getChartMeasurements(

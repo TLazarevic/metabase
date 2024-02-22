@@ -38,6 +38,7 @@ import { getChartMeasurements } from "../../utils/layout";
 import { getTimelineEventsSeries } from "../../timeline-events/option";
 import { buildAxes } from "../../option/axis";
 import { getSharedEChartsOptions } from "../../option";
+import { isTimeSeriesAxis } from "../../model/guards";
 
 type WaterfallSeriesOptions =
   | RegisteredSeriesOption["line"]
@@ -92,14 +93,11 @@ const getBarWidth = (
   chartMeasurements: ChartMeasurements,
   settings: ComputedVisualizationSettings,
 ) => {
-  if (
-    settings["graph.x_axis.scale"] !== "timeseries" ||
-    !xAxisModel.timeSeriesInterval
-  ) {
+  if (!isTimeSeriesAxis(xAxisModel)) {
     return DEFAULT_BAR_WIDTH;
   }
 
-  let dataPointsCount = xAxisModel.timeSeriesInterval.lengthInIntervals + 1;
+  let dataPointsCount = xAxisModel.lengthInIntervals + 1;
   if (settings["waterfall.show_total"]) {
     dataPointsCount += 1;
   }
