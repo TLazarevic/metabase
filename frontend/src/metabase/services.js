@@ -219,7 +219,7 @@ export const DashboardApi = {
 
 export const SearchApi = {
   list: GET("/api/search"),
-}
+};
 
 export const CollectionsApi = {
   list: GET("/api/collection"),
